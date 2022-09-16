@@ -1,0 +1,78 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "123",
+      "role": "admin",
+      "email": "admin@localhost",
+      "gender": "m",
+      "birthdate": "1990-01-01",
+      "age": 30
+    },
+    {
+      "id": 2,
+      "username": "user",
+      "password": "123",
+      "role": "user",
+      "email": "admin@localhost",
+      "gender": "m",
+      "birthdate": "1990-01-01",
+      "age": 30
+    },
+    {
+      "id": 3,
+      "username": "admin",
+      "password": "admin",
+      "role": "user",
+      "email": "lo",
+      "gender": "f",
+      "birthdate": "1999-01-01",
+      "age": 21
+    }
+  ],
+  "foods": [
+    {
+      "id": 1,
+      "name": "Apple",
+      "price": 15,
+      "category": "fruit"
+    },
+    {
+      "id": 2,
+      "name": "Orange",
+      "price": 1.5,
+      "category": "fruit"
+    },
+    {
+      "id": 3,
+      "name": "Banana",
+      "price": 1.5,
+      "category": "fruit"
+    },
+    {
+      "id": 4,
+      "name": "Milk",
+      "price": 1.5,
+      "category": "drink"
+    },
+    {
+      "id": 5,
+      "name": "Water",
+      "price": 1.5,
+      "category": "drink"
+    },
+    {
+      "id": 6,
+      "name": "Bread",
+      "price": 1.5,
+      "category": "bread"
+    },
+    {
+      "id": 7,
+      "name": "Egg",
+      "price": 1.5,
+      "category": "bread"
+    }
+  ]
+}
