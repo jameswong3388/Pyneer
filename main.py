@@ -78,9 +78,9 @@ def register_page():
         gender = gender.lower()
         birthdate = input('Birthday (YYYY-MM-DD): ')
 
-        empty_validation = helpers.null_input_checker([username, password, confirm_password, email, gender, birthday])
+        empty_validation = helpers.null_input_checker([username, password, confirm_password, email, gender, birthdate])
 
-        username_validation = helpers.dictionary_existence_checker(key='username', value=username, table='users')
+        username_validation = helpers.existence_checker(key='username', value=username, table='users')
 
         password_validation = helpers.confirm_password_checker(password, confirm_password)
 
@@ -88,19 +88,31 @@ def register_page():
 
         gender_validation = helpers.gender_checker(gender)
 
-        birthday_format_validation = helpers.birthday_format_checker(birthday)
+        birthday_format_validation = helpers.birthday_format_checker(birthdate)
 
         if empty_validation['validate'] and email_validation['validate'] and password_validation['validate'] and \
-                username_validation['validate'] and birthday_format_validation['validate'] and \
+                username_validation['exist'] and birthday_format_validation['validate'] and \
                 gender_validation['validate']:
 
             register({"username": username, "password": password, "confirm_password": password, "email": email,
-                      "gender": gender, "birthday": birthday, "role": "user"})
+                      "gender": gender, "birthday": birthdate, "role": "user"})
         else:
-            input(empty_validation['message'] + username_validation['message'] + password_validation[
-                'message'] + email_validation['message'] + gender_validation['message'] +
-                  birthday_format_validation['message'])
-            register_page()
+
+            validation_messages = [
+                empty_validation['message'],
+                username_validation['message'],
+                password_validation['message'],
+                email_validation['message'],
+                gender_validation['message'],
+                birthday_format_validation['message']
+            ]
+
+            print(validation_messages)
+
+            for message in validation_messages:
+                print(message)
+                input('Press enter to try again . . .')
+                register_page()
 
     elif option == "2":
         auth_page()
@@ -120,7 +132,7 @@ def authenticator(auth_username, auth_password):
     authenticate = False
 
     queried_key = ['username', 'password', 'role']
-    read_data = crud.read(file='database.json', mode='r', table='users', queried_key=queried_key)
+    read_data = crud.read(file='database.json', table='users', queried_key=queried_key)
 
     if read_data['status'] and read_data['result']:
         for user in read_data['result']:
@@ -142,7 +154,7 @@ def authenticator(auth_username, auth_password):
 
 
 def register(inputs):
-    process = crud.create(file='database.json', mode='r+', table='users', data=inputs)
+    process = crud.create(file='database.json', table='users', data=inputs)
 
     if process['status']:
         helpers.processing(['Registering . . .', 'Registration successful!'])
@@ -158,14 +170,4 @@ def exit_program():
 
 
 if __name__ == '__main__':
-    # auth_page()
-
-    data = {"unique_key": "id", "unique_value": 7}
-
-    # data2 = {"unique_key": "id", "unique_value": 7, "key": "price", "value": "16"}
-
-    # crud = crud.update(file='database.json', mode='r+', table='foods', data=data2)
-
-    crud2 = crud.delete(file='database.json', table='foods', data=data)
-
-    print(crud2)
+    auth_page()

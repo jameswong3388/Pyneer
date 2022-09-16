@@ -56,7 +56,7 @@ def update_user_page():
 
             data = {"unique_key": "username", "unique_value": username, "key": key, "value": value}
 
-            updated_user = crud.update(file='database.json', mode='r+', table='users', data=data)
+            updated_user = crud.update(file='database.json', table='users', data=data)
 
             input(updated_user['message'])
             update_user_page()

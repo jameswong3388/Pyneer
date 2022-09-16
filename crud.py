@@ -1,12 +1,18 @@
 import json
 
 
-def create(file, mode, table, data):
-    # data is a dictionary with the following keys and values:
-    # e.g. {'username': 'admin', 'password': 'admin', 'role': 'admin'}
+def create(file, table, data):
+    """
+    This function creates a new record in the table
+    (:param) file: File used to store the data
+    (:param) table: Table to be used to store the data
+    (:param) data: Data in the form of a dictionary
+
+    e.g. data = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
+    """
 
     try:
-        f = open(file, mode)
+        f = open(file, 'r+')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -32,13 +38,21 @@ def create(file, mode, table, data):
             return {"message": "Failed . . .", "status": False}
 
 
-def read(file, mode, table, queried_key):
-    # queried_key is a list of keys to be queried from the table e.g. ['username', 'password', 'role']
+def read(file, table, queried_key):
+    """
+    This function reads a record from the table
+
+    (:param) file: File used to store the data
+    (:param) table: Table to be used to store the data
+    (:param) queried_key: An array of keys to be queried from the table
+
+    e.g. queried_key = ['username', 'password', 'role']
+    """
 
     new_lists = []
 
     try:
-        f = open(file, mode)
+        f = open(file, 'r')
         loaded_data = json.loads(f.read())
 
     except FileNotFoundError as e:
@@ -60,7 +74,7 @@ def read(file, mode, table, queried_key):
                     if key in i and key != '':
                         new_dict[key] = i[key]
                     else:
-                        return {"message": "Key not found . . .", "status": False}
+                        return {"message": "Invalid Key . . .", "status": False}
 
                 new_lists.append(new_dict)
 
@@ -74,12 +88,21 @@ def read(file, mode, table, queried_key):
             return {"message": "Failed . . .", "status": False, "result": []}
 
 
-def update(file, mode, table, data):
-    # data is a dictionary with the following keys:
-    # unique_key, unique_value, key, value
+def update(file, table, data):
+    """
+    This function updates a record in the table
+
+    (:param) file: The file used to store the data
+    (:param) table: The table to be used to store the data
+    (:param) data: Data in the form of a dictionary
+
+    e.g. data = {'unique_key': 'username', 'unique_value': 'admin', 'key': 'role', 'value': 'admin'}
+    where unique_key and unique_value  is the key value used to identify the record to be updated,
+    and key and value is the key value to be updated.
+    """
 
     try:
-        f = open(file, mode)
+        f = open(file, 'r+')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -123,8 +146,16 @@ def update(file, mode, table, data):
 
 
 def delete(file, table, data):
-    # data is a dictionary with the following keys:
-    # unique_key, unique_value
+    """
+    This function deletes a record from the table
+
+    (:param) file: The file used to store the data
+    (:param) table: The table to be used to store the data
+    (:param) data: Data in the form of a dictionary
+
+    e.g. data = {'unique_key': 'username', 'unique_value': 'admin'}
+    where unique_key and unique_value  is the key value used to identify the record to be deleted.
+    """
 
     try:
         f = open(file, 'r+')
@@ -132,16 +163,13 @@ def delete(file, table, data):
         f.close()
 
     except FileNotFoundError as e:
-        print(e)
-        return False
+        return {"message": e, "status": False}
 
     except json.decoder.JSONDecodeError as e:
-        print(e)
-        return False
+        return {"message": e, "status": False}
 
     except Exception as e:
-        print(e)
-        return False
+        return {"message": e, "status": False}
 
     else:
 
@@ -150,18 +178,7 @@ def delete(file, table, data):
         if isinstance(data, dict) and table in loaded_data and data != {} and data['unique_key'] != '' and \
                 data['unique_value'] != '':
 
-            print(loaded_data[table])
-
             for i in loaded_data[table]:
-
-                # i['id'] == 7
-                print(i[data['unique_key']])
-                print(data['unique_value'])
-
-                print(i[data['unique_key']] == data['unique_value'])
-
-                # unique_key = id and unique_value = 7
-
                 if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
 
                     try:
