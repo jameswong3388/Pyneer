@@ -56,13 +56,13 @@ def read(file, table, queried_key):
         loaded_data = json.loads(f.read())
 
     except FileNotFoundError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except json.decoder.JSONDecodeError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except Exception as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     else:
         if isinstance(queried_key, list) and queried_key != [] and table in loaded_data:
@@ -106,13 +106,13 @@ def update(file, table, data):
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except json.decoder.JSONDecodeError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except Exception as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     else:
 
@@ -163,13 +163,13 @@ def delete(file, table, data):
         f.close()
 
     except FileNotFoundError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except json.decoder.JSONDecodeError as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     except Exception as e:
-        return {"message": e, "status": False}
+        return {"message": str(e), "status": False}
 
     else:
 
@@ -210,3 +210,93 @@ def delete(file, table, data):
 
         else:
             return {"message": "Failed . . .", "status": False}
+
+
+def create_table(table):
+    """
+    This function creates a table
+
+    (:param) table: The table to be created
+    """
+
+    try:
+        f = open('database.json', 'r+')
+        loaded_data = json.load(f)
+
+    except FileNotFoundError as e:
+        return {"message": str(e), "status": False}
+
+    except json.decoder.JSONDecodeError as e:
+        return {"message": str(e), "status": False}
+
+    except Exception as e:
+        return {"message": str(e), "status": False}
+
+    else:
+
+        try:
+            if table not in loaded_data and table != '':
+                loaded_data[table] = []
+
+            else:
+                raise Exception("Table already exists or Invalid table name")
+
+        except KeyError as e:
+            return {"message": str(e), "status": False}
+
+        except Exception as e:
+            return {"message": str(e), "status": False}
+
+        else:
+            f.seek(0)
+            json.dump(loaded_data, f, indent=2)
+            f.close()
+
+            return {"message": "Successfully . . .", "status": True}
+
+
+def delete_table(table):
+    """
+    This function deletes a table
+
+    (:param) table: The table to be deleted
+    """
+
+    try:
+        f = open('database.json', 'r+')
+        loaded_data = json.load(f)
+        f.close()
+
+    except FileNotFoundError as e:
+        return {"message": str(e), "status": False}
+
+    except json.decoder.JSONDecodeError as e:
+        return {"message": str(e), "status": False}
+
+    except Exception as e:
+        return {"message": str(e), "status": False}
+
+    else:
+
+        try:
+            if table in loaded_data and table != '':
+
+                loaded_data.pop(table)
+
+            else:
+                raise Exception("Table does not exist or Invalid table name")
+
+        except KeyError as e:
+            return {"message": str(e), "status": False}
+
+        except Exception as e:
+            return {"message": str(e), "status": False}
+
+        else:
+            with open('database.json', 'w') as f:
+
+                json.dump(loaded_data, f, indent=2)
+
+                f.close()
+
+            return {"message": "Successfully . . .", "status": True}

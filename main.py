@@ -91,11 +91,13 @@ def register_page():
         birthday_format_validation = helpers.birthday_format_checker(birthdate)
 
         if empty_validation['validate'] and email_validation['validate'] and password_validation['validate'] and \
-                username_validation['exist'] and birthday_format_validation['validate'] and \
+                not username_validation['exist'] and birthday_format_validation['validate'] and \
                 gender_validation['validate']:
 
-            register({"username": username, "password": password, "confirm_password": password, "email": email,
-                      "gender": gender, "birthday": birthdate, "role": "user"})
+            new_user_id = helpers.get_new_id(table='users')
+
+            register({"id": new_user_id['result'], "username": username, "password": password,
+                      "email": email, "gender": gender, "birthday": birthdate, "role": "user"})
         else:
 
             validation_messages = [
@@ -170,4 +172,8 @@ def exit_program():
 
 
 if __name__ == '__main__':
-    auth_page()
+    # auth_page()
+
+    a = crud.delete_table(table='a')
+
+    print(a)
