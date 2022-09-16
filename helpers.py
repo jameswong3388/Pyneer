@@ -60,7 +60,6 @@ def dictionary_existence_checker(key, value, table):
     if read_data['status'] and read_data['result']:
         for data in read_data['result']:
             if data[key] == value:
-                found = True
 
                 return {'validate': True, 'message': ""}
 

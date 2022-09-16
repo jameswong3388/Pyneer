@@ -91,7 +91,7 @@ def delete_user_page():
 
         if username_existence['validate']:
 
-            data = {"uniqueKey": "username", "uniqueValue": username}
+            data = {"unique_key": "username", "unique_value": username}
 
             deleted_user = crud.delete(file='database.json', table='users', data=data)
 

@@ -76,7 +76,7 @@ def register_page():
         email = input('Email: ')
         gender = input('Gender (m/f/M/F): ')
         gender = gender.lower()
-        birthday = input('Birthday (YYYY-MM-DD): ')
+        birthdate = input('Birthday (YYYY-MM-DD): ')
 
         empty_validation = helpers.null_input_checker([username, password, confirm_password, email, gender, birthday])
 
@@ -160,12 +160,12 @@ def exit_program():
 if __name__ == '__main__':
     # auth_page()
 
-    data = {'unique_key': 'id', 'unique_value': 1, 'key': 'price', 'value': 15}
+    data = {"unique_key": "id", "unique_value": 7}
 
-    data2 = {}
+    # data2 = {"unique_key": "id", "unique_value": 7, "key": "price", "value": "16"}
 
-    data3 = []
+    # crud = crud.update(file='database.json', mode='r+', table='foods', data=data2)
 
-    crud = crud.update(file='database.json', mode='r+', table='foods', data=data)
+    crud2 = crud.delete(file='database.json', table='foods', data=data)
 
-    print(crud)
+    print(crud2)
