@@ -29,7 +29,7 @@ def admin_menu():
         view_table()
 
     elif option == "4":
-        pass
+        create_table()
 
     elif option == "5":
         auth.auth_page()
@@ -84,7 +84,7 @@ def update_object():
 
 
 def delete_object():
-    print('--Delete User Page--')
+    print('--Delete Table\'s objects--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -124,7 +124,7 @@ def delete_object():
 
 
 def view_table():
-    print('--View all Users Page--')
+    print('--View Table\'s objects--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -149,3 +149,29 @@ def view_table():
     else:
         input(invalid_input_message)
         view_table()
+
+
+def create_table():
+    print('--Create new Table--')
+    print('1. Continue')
+    print('2. Back')
+    print('0. Quit')
+    print()
+    option = input('Please select an option >>  ')
+
+    if option == "0":
+        helpers.exit_program()
+
+    elif option == "1":
+        table = input('Key in the name of the table you want to create: ')
+        created_table = api.create_table(table=table)
+
+        input(created_table['message'])
+        admin_menu()
+
+    elif option == "2":
+        admin_menu()
+
+    else:
+        input(invalid_input_message)
+        create_table()
