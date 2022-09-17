@@ -9,6 +9,8 @@ def create(file, table, data):
     (:param) data: Data in the form of a dictionary
 
     e.g. data = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
+
+    if the table does not exist, it will be created
     """
 
     try:
@@ -25,15 +27,25 @@ def create(file, table, data):
         return {"message": e, "status": False}
 
     else:
-        if isinstance(data, dict) and data != {} and table in loaded_data:
-            loaded_data[table].append(data)
 
-            f.seek(0)
-            json.dump(loaded_data, f, indent=2)
+        if isinstance(data, dict) and data != {}:
+            if table in loaded_data:
+                loaded_data[table].append(data)
 
-            f.close()
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-            return {"message": "Successful . . .", "status": True}
+                f.close()
+
+                return {"message": "Successful . . .", "status": True}
+
+            else:
+                create_table(table)
+
+                create(file, table, data)
+
+                return {"message": "Successful . . .", "status": True}
+
         else:
             return {"message": "Failed . . .", "status": False}
 
@@ -66,28 +78,28 @@ def read(file, table, queried_key):
         return {"message": str(e), "status": False}
 
     else:
-        if isinstance(queried_key, list) and queried_key != [] and table in loaded_data:
+        if isinstance(queried_key, list) and table in loaded_data:
+            if queried_key:
 
-            for i in loaded_data[table]:
-                new_dict = {}
+                for i in loaded_data[table]:
+                    new_dict = {}
 
-                for key in queried_key:
+                    for key in queried_key:
 
-                    if key in i and key != '':
+                        if key in i and key != '':
 
-                        new_dict[key] = i[key]
+                            new_dict[key] = i[key]
 
-                    else:
-                        return {"message": "Invalid Key . . .", "status": False}
+                        else:
+                            return {"message": "Invalid Key . . .", "status": False}
 
-                new_lists.append(new_dict)
+                    new_lists.append(new_dict)
 
-            f.close()
+                f.close()
 
-            return {"message": "Successfully . . . ", "status": True, "result": new_lists}
-
-        elif table in loaded_data and queried_key == []:
-            return {"message": "Successfully . . . ", "status": True, "result": loaded_data[table]}
+                return {"message": "Successfully . . . ", "status": True, "result": new_lists}
+            else:
+                return {"message": "Successfully . . . ", "status": True, "result": loaded_data[table]}
 
         else:
             return {"message": "Failed . . .", "status": False, "result": []}
@@ -161,7 +173,7 @@ def delete(file, table, data):
     e.g. data = {'unique_key': 'username', 'unique_value': 'admin'}
     where unique_key and unique_value  is the key value used to identify the record to be deleted.
 
-    if unique_key and unique_value is empty then all the records in the table will be deleted.
+    if data = {} then all the records in the table will be deleted.
     """
 
     try:
@@ -179,41 +191,40 @@ def delete(file, table, data):
         return {"message": str(e), "status": False}
 
     else:
-
         flag = False
 
-        if isinstance(data, dict) and table in loaded_data and data != {} and data['unique_key'] != '' and \
-                data['unique_value'] != '':
+        if isinstance(data, dict) and table in loaded_data:
 
-            for i in loaded_data[table]:
-                if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
+            if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
 
-                    try:
-                        loaded_data[table].remove(i)
+                for i in loaded_data[table]:
+                    if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
 
-                    except ValueError as e:
-                        return {"message": e, "status": False}
+                        try:
+                            loaded_data[table].remove(i)
 
-                    else:
-                        f = open(file, 'w')
-                        json.dump(loaded_data, f, indent=2)
-                        f.close()
+                        except ValueError as e:
+                            return {"message": e, "status": False}
 
-                        return {"message": "Successful . . .", "status": True}
+                        else:
+                            f = open(file, 'w')
+                            json.dump(loaded_data, f, indent=2)
+                            f.close()
 
-            if not flag:
-                return {"message": "Failed . . .", "status": False}
+                            return {"message": "Successful . . .", "status": True}
 
-        elif isinstance(data, dict) and data == {} and table in loaded_data:
+                if not flag:
+                    return {"message": "Failed . . .", "status": False}
 
-            loaded_data[table] = []
+            else:
+                loaded_data[table] = []
 
-            with open(file, 'w') as f:
-                json.dump(loaded_data, f, indent=2)
+                with open(file, 'w') as f:
+                    json.dump(loaded_data, f, indent=2)
 
-            f.close()
+                f.close()
 
-            return {"message": "Successfully . . .", "status": True}
+                return {"message": "Successfully . . .", "status": True}
 
         else:
             return {"message": "Failed . . .", "status": False}
