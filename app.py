@@ -1,7 +1,5 @@
-import auth
-import crud
-import helpers
+from pages.auth import auth_page
 
 
 if __name__ == "__main__":
-    auth.auth_page()
+    auth_page()

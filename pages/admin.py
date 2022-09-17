@@ -1,6 +1,5 @@
-import auth
-import helpers
-import crud
+from pages import auth
+from api import crud, helpers
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
 
@@ -47,6 +46,7 @@ def update_user_page():
         helpers.exit_program()
 
     elif option == "1":
+
         user_id = int(input('Key in the "ID" of the user you want to update: '))
 
         user_id_existence = helpers.existence_checker(key='id', value=user_id, table='users')
@@ -57,7 +57,7 @@ def update_user_page():
 
             data = {"unique_key": "id", "unique_value": user_id, "key": key, "value": value}
 
-            updated_user = crud.update(file='database.json', table='users', data=data)
+            updated_user = crud.update(table='users', data=data)
 
             input(updated_user['message'])
             update_user_page()
@@ -94,7 +94,7 @@ def delete_user_page():
 
             data = {"unique_key": "id", "unique_value": user_id}
 
-            deleted_user = crud.delete(file='database.json', table='users', data=data)
+            deleted_user = crud.delete(table='users', data=data)
 
             input(deleted_user['message'])
             delete_user_page()
@@ -123,7 +123,7 @@ def view_all_users_page():
         helpers.exit_program()
 
     elif option == "1":
-        users = crud.read(file='database.json', table='users', queried_key=[])
+        users = crud.read(table='users', queried_key=[])
 
         for user in users['result']:
             print(user)

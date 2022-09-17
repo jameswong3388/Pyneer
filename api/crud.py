@@ -1,7 +1,7 @@
 import json
 
 
-def create(file, table, data):
+def create(table, data, file='database.json'):
     """
     This function creates a new record in the table
     (:param) file: File used to store the data
@@ -40,9 +40,9 @@ def create(file, table, data):
                 return {"message": "Successful . . .", "status": True}
 
             else:
-                create_table(table)
+                create_table(table=table, file=file)
 
-                create(file, table, data)
+                create(table=table, data=data, file=file)
 
                 return {"message": "Successful . . .", "status": True}
 
@@ -50,7 +50,7 @@ def create(file, table, data):
             return {"message": "Failed . . .", "status": False}
 
 
-def read(file, table, queried_key):
+def read(table, queried_key, file='database.json'):
     """
     This function reads a record from the table
 
@@ -105,7 +105,7 @@ def read(file, table, queried_key):
             return {"message": "Failed . . .", "status": False, "result": []}
 
 
-def update(file, table, data):
+def update(table, data, file='database.json'):
     """
     This function updates a record in the table
 
@@ -162,7 +162,7 @@ def update(file, table, data):
             return {"message": "Failed . . .", "status": False}
 
 
-def delete(file, table, data):
+def delete(table, data, file='database.json'):
     """
     This function deletes a record from the table
 
@@ -230,7 +230,7 @@ def delete(file, table, data):
             return {"message": "Failed . . .", "status": False}
 
 
-def create_table(table):
+def create_table(table, file='database.json'):
     """
     This function creates a table
 
@@ -238,7 +238,7 @@ def create_table(table):
     """
 
     try:
-        f = open('database.json', 'r+')
+        f = open(file, 'r+')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -273,7 +273,7 @@ def create_table(table):
             return {"message": "Successfully . . .", "status": True}
 
 
-def delete_table(table):
+def delete_table(table, file='database.json'):
     """
     This function deletes a table
 
@@ -281,7 +281,7 @@ def delete_table(table):
     """
 
     try:
-        f = open('database.json', 'r+')
+        f = open(file, 'r+')
         loaded_data = json.load(f)
         f.close()
 
@@ -311,7 +311,7 @@ def delete_table(table):
             return {"message": str(e), "status": False}
 
         else:
-            with open('database.json', 'w') as f:
+            with open(file, 'w') as f:
 
                 json.dump(loaded_data, f, indent=2)
 

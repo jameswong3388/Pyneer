@@ -1,8 +1,5 @@
-import crud
-import helpers
-import user
-import user as user_page
-import admin
+from api import crud, helpers,database
+from pages import user, user as user_page, admin
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
 empty_input_message = "Please enter a value . . ."
@@ -77,7 +74,7 @@ def register_page():
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
-        new_id = helpers.generate_new_id(table='users')
+        new_id = database.generate_new_id(table='users')
 
         validated_inputs = {"id": new_id['result']}
 
