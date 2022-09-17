@@ -21,7 +21,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
 ├── app
 │   └── helpers.py
 ├── api
-│   ├── crud.py
+│   ├── __init__.py
 │   └── database.py
 ├── database
 │   ├── db.json
