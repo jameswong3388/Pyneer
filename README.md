@@ -3,7 +3,8 @@
 ## Intro
 Pyneer is a minimal scaffolding designed to help students with their school's Python project, especially for people who just started learning Python.
 
-Pyneer comes with simple scaffolding as well as basic authentication, and admin functionality to help you get started with your project.
+
+Pyneer comes with simple scaffolding as well as basic authentication, and admin functionality to help you get started with your project. It has well written api , so you can be easily expand and customized according to your use case.
 
 Makesure give it a star if you like the project 👍.
 
@@ -35,16 +36,18 @@ git clone https://github.com/jameswong3388/Pyneer.git
 
 `app.py` - The main file to run the project.
 
-`\api` - Contains all the API related files, most of Pyneer and your app's logic will be here.
+`\app` - Here contains all your application logic.
+
+`\api` - Contains all the API related files, all the Pyneer's API are here.
 
 `\database` - Contains the database file, you can use `db.json` or `db.txt` to store your data.
 
 `\pages` - Contains all the pages, feel free to extend it.
 
 ## Usage
-To run the project, simply run `app.py` with `python` or `python3` depending on your system.
+To run the project, simply run `index.py` with `python` or `python3` depending on your system.
 ```
-python app.py
+python index.py
 ```
 
 

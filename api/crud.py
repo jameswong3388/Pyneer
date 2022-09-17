@@ -1,7 +1,7 @@
 import json
 
 
-def create(table, data, file='databases/database.json'):
+def create(table, data, file='database/db.json'):
     """
     This function creates a new record in the table
     (:param) file: File used to store the data
@@ -50,7 +50,7 @@ def create(table, data, file='databases/database.json'):
             return {"message": "Failed . . .", "status": False}
 
 
-def read(table, queried_key, file='databases/database.json'):
+def read(table, queried_key, file='database/db.json'):
     """
     This function reads a record from the table
 
@@ -105,7 +105,7 @@ def read(table, queried_key, file='databases/database.json'):
             return {"message": "Failed . . .", "status": False, "result": []}
 
 
-def update(table, data, file='databases/database.json'):
+def update(table, data, file='database/db.json'):
     """
     This function updates a record in the table
 
@@ -162,7 +162,7 @@ def update(table, data, file='databases/database.json'):
             return {"message": "Failed . . .", "status": False}
 
 
-def delete(table, data, file='databases/database.json'):
+def delete(table, data, file='database/db.json'):
     """
     This function deletes a record from the table
 
@@ -230,7 +230,7 @@ def delete(table, data, file='databases/database.json'):
             return {"message": "Failed . . .", "status": False}
 
 
-def create_table(table, file='databases/database.json'):
+def create_table(table, file='database/db.json'):
     """
     This function creates a table
 
@@ -273,7 +273,7 @@ def create_table(table, file='databases/database.json'):
             return {"message": "Successfully . . .", "status": True}
 
 
-def delete_table(table, file='databases/database.json'):
+def delete_table(table, file='database/db.json'):
     """
     This function deletes a table
 

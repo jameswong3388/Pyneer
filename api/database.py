@@ -1,9 +1,9 @@
 from api import crud
 
 
-def query(key, value, table, file='databases/database.json'):
+def query(key, value, table, file='database/db.json'):
     """
-    This function will query the databases.json file and return a result
+    This function will query the db.json file and return a result
     with all the data that matches the key and value.
 
     (:param) key: Dictionary key
@@ -34,7 +34,7 @@ def query(key, value, table, file='databases/database.json'):
         return {'status': False, 'message': 'No data found'}
 
 
-def generate_new_id(table, file='databases/database.json'):
+def generate_new_id(table, file='database/db.json'):
     """
     This function will get the last id of the table and add 1 to it.
 
