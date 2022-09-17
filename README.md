@@ -1,10 +1,10 @@
 # Pyneer
 
 ## Intro
-Pyneer is a minimal scaffolding designed to help students with their school's Python project, especially for people who just started learning Python.
+Pyneer is a minimal scaffolding designed to help students with their school's Python assignments. 
 
 
-Pyneer comes with minimal scaffolding as well as basic authentication, and admin functionality to help you get started with your project. It has well written api , so you can be easily expand and customized according to your use case.
+Pyneer comes with minimal scaffolding as well as basic authentication, and admin functionality to help you quickly get started with your project. It has well written api , so you can easily expand and customized your project according to your use case.
 
 Makesure give it a star if you like the project 👍.
 
