@@ -18,7 +18,7 @@
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": 30
+      "age": "1"
     }
   ],
   "foods": [
