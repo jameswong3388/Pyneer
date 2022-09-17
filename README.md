@@ -4,6 +4,9 @@
 Pyneer is a framework designed to help students with their school's Python project, especially Beginners level  and that's why is called Pyneer.
 
 Pyneer comes with simple scaffolding as well as basic authentication, and admin functionality to help you get started with your project.
+
+Makesure give it a star if you like the project 👍.
+
 ## Requirement
 `python` - ^3.8*
 
