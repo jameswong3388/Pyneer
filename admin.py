@@ -25,7 +25,7 @@ def admin_menu():
         delete_user_page()
 
     elif option == "3":
-        pass
+        view_all_users_page()
 
     elif option == "4":
         auth.auth_page()
@@ -109,3 +109,31 @@ def delete_user_page():
     else:
         input(invalid_input_message)
         delete_user_page()
+
+
+def view_all_users_page():
+    print('--View all Users Page--')
+    print('1. Continue')
+    print('2. Back')
+    print('0. Quit')
+    print()
+    option = input('Please select an option >>  ')
+
+    if option == "0":
+        helpers.exit_program()
+
+    elif option == "1":
+        users = crud.read(file='database.json', table='users', queried_key=[])
+
+        for user in users['result']:
+            print(user)
+
+        input('Press enter to continue . . .')
+        admin_menu()
+
+    elif option == "2":
+        admin_menu()
+
+    else:
+        input(invalid_input_message)
+        view_all_users_page()

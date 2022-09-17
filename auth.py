@@ -1,5 +1,6 @@
 import crud
 import helpers
+import user
 import user as user_page
 import admin
 
@@ -142,14 +143,14 @@ def authenticator(auth_username, auth_password):
     read_data = crud.read(file='database.json', table='users', queried_key=queried_key)
 
     if read_data['status'] and read_data['result']:
-        for user in read_data['result']:
-            if auth_username == user['username'] and auth_password == user['password']:
+        for data in read_data['result']:
+            if auth_username == data['username'] and auth_password == data['password']:
                 authenticate = True
-                helpers.processing(['Logging in . . .', 'Welcome, {}!'.format(user['username'])])
-                if user['role'] == 'admin':
+                helpers.processing(['Logging in . . .', 'Welcome, {}!'.format(data['username'])])
+                if data['role'] == 'admin':
                     admin.admin_menu()
                 else:
-                    user_page.main_menu(user)
+                    user_page.main_menu(data)
 
         if not authenticate:
             print('Invalid username or password')
@@ -166,7 +167,7 @@ def register(inputs):
     if process['status']:
         helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',
                             'Welcome, {}!'.format(inputs['username'])])
-        login_page()
+        user.main_menu(inputs)
     else:
         helpers.processing(['Registering . . .', 'Registration failed!'])
         register_page()
