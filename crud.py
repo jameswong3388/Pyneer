@@ -47,6 +47,7 @@ def read(file, table, queried_key):
     (:param) queried_key: An array of keys to be queried from the table
 
     e.g. queried_key = ['username', 'password', 'role']
+    if queried_key = [] then all the keys in the table will be queried
     """
 
     new_lists = []
@@ -155,6 +156,8 @@ def delete(file, table, data):
 
     e.g. data = {'unique_key': 'username', 'unique_value': 'admin'}
     where unique_key and unique_value  is the key value used to identify the record to be deleted.
+
+    if unique_key and unique_value is empty then all the records in the table will be deleted.
     """
 
     try:

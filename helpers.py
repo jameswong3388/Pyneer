@@ -136,7 +136,7 @@ def query_object(key, value, table):
         return {'status': False, 'message': 'No data found'}
 
 
-def get_new_id(table):
+def generate_new_id(table):
     """
     This function will get the last id of the table and add 1 to it.
 

@@ -70,51 +70,61 @@ def register_page():
 
     elif option == "1":
         print('--Registration--')
-        username = input('Username: ')
-        password = input('Password: ')
-        confirm_password = input('Confirm Password: ')
-        email = input('Email: ')
-        gender = input('Gender (m/f/M/F): ')
-        gender = gender.lower()
-        birthdate = input('Birthday (YYYY-MM-DD): ')
 
-        empty_validation = helpers.null_input_checker([username, password, confirm_password, email, gender, birthdate])
+        inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthday (YYYY-MM-DD):']
 
-        username_validation = helpers.existence_checker(key='username', value=username, table='users')
+        validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthday_format_checker]
 
-        password_validation = helpers.confirm_password_checker(password, confirm_password)
+        new_id = helpers.generate_new_id(table='users')
 
-        email_validation = helpers.email_input_checker(email)
+        validated_inputs = {"id": new_id['result'], "username": '', "password": '', "role": 'user', "email": '',
+                            "gender": '', "birthdate": ''}
 
-        gender_validation = helpers.gender_checker(gender)
+        while True:
+            username = input('Username :')
+            username_validation = helpers.existence_checker(key='username', value=username, table='users')
 
-        birthday_format_validation = helpers.birthday_format_checker(birthdate)
+            if not username_validation['exist'] and username != '':
+                validated_inputs['username'] = username
+                break
 
-        if empty_validation['validate'] and email_validation['validate'] and password_validation['validate'] and \
-                not username_validation['exist'] and birthday_format_validation['validate'] and \
-                gender_validation['validate']:
+            else:
+                print("Username already exist or Invalid Input")
+                continue
 
-            new_user_id = helpers.get_new_id(table='users')
+        while True:
+            password = input('Password :')
+            confirm_password = input('Confirm Password:')
 
-            register({"id": new_user_id['result'], "username": username, "password": password,
-                      "email": email, "gender": gender, "birthday": birthdate, "role": "user"})
-        else:
+            password_validation = helpers.null_input_checker([password, confirm_password])
 
-            validation_messages = [
-                empty_validation['message'],
-                username_validation['message'],
-                password_validation['message'],
-                email_validation['message'],
-                gender_validation['message'],
-                birthday_format_validation['message']
-            ]
+            if password == confirm_password and password_validation['validate']:
+                validated_inputs['password'] = password
+                break
 
-            print(validation_messages)
+            else:
+                print("Password does not match or Invalid Input")
+                continue
 
-            for message in validation_messages:
-                print(message)
-                input('Press enter to try again . . .')
-                register_page()
+        for i in inputs:
+
+            while True:
+
+                user_input = input(i)
+
+                null = helpers.null_input_checker([user_input])
+
+                validation = validation_method[inputs.index(i)](user_input)
+
+                if validation['validate'] and null['validate']:
+                    validated_inputs[inputs[inputs.index(i)].split(' ')[0].lower()] = user_input
+                    break
+
+                else:
+                    print(validation['message'], 'or Invalid Input')
+                    continue
+
+        register(validated_inputs)
 
     elif option == "2":
         auth_page()
@@ -174,6 +184,4 @@ def exit_program():
 if __name__ == '__main__':
     # auth_page()
 
-    a = crud.delete_table(table='a')
-
-    print(a)
+    register_page()
