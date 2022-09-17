@@ -35,7 +35,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
 
 `app.py` - The main file to run the project.
 
-`\api` - Contains all the API related files, most of your app's logic will be here.
+`\api` - Contains all the API related files, most of Pyneer and your app's logic will be here.
 
 `\database` - Contains the database file, you can use `db.json` or `db.txt` to store your data.
 
