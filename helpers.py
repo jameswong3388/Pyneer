@@ -41,8 +41,6 @@ def birthdate_format_checker(birthdate):
 
     year, month, day = birthdate.split('-')
 
-    print(day, month, year)
-
     validate = True
 
     try:
@@ -52,8 +50,13 @@ def birthdate_format_checker(birthdate):
         current_month = datetime.datetime.now().month
         current_day = datetime.datetime.now().day
 
-        if int(year) > current_year or int(month) > current_month or int(day) > current_day:
+        if len(month) != 2 or len(day) != 2:
             validate = False
+
+        if int(year) >= int(current_year):
+            if int(month) >= int(current_month):
+                if int(day) > int(current_day):
+                    validate = False
 
     except ValueError:
         validate = False
@@ -62,6 +65,31 @@ def birthdate_format_checker(birthdate):
         return {'validate': True, 'message': "Valid birthdate."}
     else:
         return {'validate': False, 'message': 'Invalid date format.'}
+
+
+def age_calculator(birthdate):
+    """
+    This function will calculate the age of the user.
+
+    (:param) birthdate: Birthday in string in the format of YYYY-MM-DD
+    """
+
+    year, month, day = birthdate.split('-')
+
+    current_year = datetime.datetime.now().year
+    current_month = datetime.datetime.now().month
+    current_day = datetime.datetime.now().day
+
+    age = current_year - int(year)
+
+    if int(month) > current_month:
+        age -= 1
+
+    elif int(month) == current_month:
+        if int(day) > current_day:
+            age -= 1
+
+    return age
 
 
 def gender_checker(gender):

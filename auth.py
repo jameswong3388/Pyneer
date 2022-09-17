@@ -72,14 +72,13 @@ def register_page():
     elif option == "1":
         print('--Registration--')
 
-        inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthday (YYYY-MM-DD): ']
+        inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthdate (YYYY-MM-DD): ']
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
         new_id = helpers.generate_new_id(table='users')
 
-        validated_inputs = {"id": new_id['result'], "username": '', "password": '', "role": 'user', "email": '',
-                            "gender": '', "birthdate": ''}
+        validated_inputs = {"id": new_id['result']}
 
         while True:
             username = input('Username : ')
@@ -123,6 +122,9 @@ def register_page():
                     print(validation['message'], 'or Invalid Input')
                     continue
 
+        age = helpers.age_calculator(validated_inputs['birthdate'])
+        validated_inputs['age'] = age
+
         register(validated_inputs)
 
     elif option == "2":
@@ -162,7 +164,8 @@ def register(inputs):
     process = crud.create(file='database.json', table='users', data=inputs)
 
     if process['status']:
-        helpers.processing(['Registering . . .', 'Registration successful!'])
+        helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',
+                            'Welcome, {}!'.format(inputs['username'])])
         login_page()
     else:
         helpers.processing(['Registering . . .', 'Registration failed!'])

@@ -72,14 +72,18 @@ def read(file, table, queried_key):
                 new_dict = {}
 
                 for key in queried_key:
+
                     if key in i and key != '':
+
                         new_dict[key] = i[key]
+
                     else:
                         return {"message": "Invalid Key . . .", "status": False}
 
                 new_lists.append(new_dict)
 
             f.close()
+
             return {"message": "Successfully . . . ", "status": True, "result": new_lists}
 
         elif table in loaded_data and queried_key == []:

@@ -47,16 +47,15 @@ def update_user_page():
         helpers.exit_program()
 
     elif option == "1":
-        username = input('Key in the username of the user you want to update: ')
+        user_id = int(input('Key in the "ID" of the user you want to update: '))
 
-        username_existence = helpers.existence_checker(key='username', value=username, table='users')
-        print(username_existence)
+        user_id_existence = helpers.existence_checker(key='id', value=user_id, table='users')
 
-        if username_existence['exist']:
+        if user_id_existence['exist']:
             key = input('Key in the field you want to update: ')
             value = input('Key in the new value: ')
 
-            data = {"unique_key": "username", "unique_value": username, "key": key, "value": value}
+            data = {"unique_key": "id", "unique_value": user_id, "key": key, "value": value}
 
             updated_user = crud.update(file='database.json', table='users', data=data)
 
@@ -64,7 +63,7 @@ def update_user_page():
             update_user_page()
 
         else:
-            input(username_existence['message'])
+            input(user_id_existence['message'])
             update_user_page()
 
     elif option == "2":
@@ -87,13 +86,13 @@ def delete_user_page():
         helpers.exit_program()
 
     elif option == "1":
-        username = input('Key in the username of the user you want to delete: ')
+        user_id = int(input('Key in the "ID" of the user you want to delete: '))
 
-        username_existence = helpers.existence_checker(key='username', value=username, table='users')
+        user_id_existence = helpers.existence_checker(key='id', value=user_id, table='users')
 
-        if username_existence['validate']:
+        if user_id_existence['exist']:
 
-            data = {"unique_key": "username", "unique_value": username}
+            data = {"unique_key": "id", "unique_value": user_id}
 
             deleted_user = crud.delete(file='database.json', table='users', data=data)
 
@@ -101,7 +100,7 @@ def delete_user_page():
             delete_user_page()
 
         else:
-            input(username_existence['message'])
+            input(user_id_existence['message'])
             delete_user_page()
 
     elif option == "2":
