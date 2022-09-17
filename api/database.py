@@ -1,7 +1,7 @@
 from api import crud
 
 
-def query(key, value, table, file='database/databases.json'):
+def query(key, value, table, file='databases/database.json'):
     """
     This function will query the databases.json file and return a result
     with all the data that matches the key and value.
@@ -34,7 +34,7 @@ def query(key, value, table, file='database/databases.json'):
         return {'status': False, 'message': 'No data found'}
 
 
-def generate_new_id(table, file='database/databases.json'):
+def generate_new_id(table, file='databases/database.json'):
     """
     This function will get the last id of the table and add 1 to it.
 

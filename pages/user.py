@@ -1,6 +1,3 @@
-from api import helpers
-
-
 def main_menu(user_info):
     print('--Main Menu--')
-    helpers.exit_program()
+    print('Logged in as "' + user_info['username'] + '"')

@@ -125,7 +125,7 @@ def exit_program():
     exit()
 
 
-def existence_checker(key, value, table, file='database/databases.json'):
+def existence_checker(key, value, table, file='databases/database.json'):
     """
     This function will check if the value of a key exists in the table.
 
