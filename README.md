@@ -21,10 +21,11 @@ git clone https://github.com/jameswong3388/Pyneer.git
 ```
 .
 ├── app.py
+├── app
+│   └── helpers.py
 ├── api
 │   ├── crud.py
-│   ├── database.py
-│   └── helpers.py
+│   └── database.py
 ├── database
 │   ├── db.json
 │   └── db.txt
