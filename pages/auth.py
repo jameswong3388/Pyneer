@@ -1,4 +1,4 @@
-from api import crud, helpers,database
+from api import crud, helpers, database
 from pages import user, user as user_page, admin
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
@@ -137,7 +137,7 @@ def authenticator(auth_username, auth_password):
     authenticate = False
 
     queried_key = ['username', 'password', 'role']
-    read_data = crud.read(file='database.json', table='users', queried_key=queried_key)
+    read_data = crud.read(table='users', queried_key=queried_key)
 
     if read_data['status'] and read_data['result']:
         for data in read_data['result']:
@@ -159,7 +159,7 @@ def authenticator(auth_username, auth_password):
 
 
 def register(inputs):
-    process = crud.create(file='database.json', table='users', data=inputs)
+    process = crud.create(table='users', data=inputs)
 
     if process['status']:
         helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',
