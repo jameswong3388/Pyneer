@@ -32,20 +32,6 @@ def email_input_checker(email):
     return {'validate': False, 'message': 'Invalid email address'}
 
 
-def confirm_password_checker(password, confirm_password):
-    """
-    This function will check if the password and confirm password are the same.
-
-    (:param) password: Password in string
-    (:param) confirm_password: Confirm password in string
-    """
-
-    if password == confirm_password:
-        return {'validate': True, 'message': ""}
-
-    return {'validate': False, 'message': 'Password does not match'}
-
-
 def birthdate_format_checker(birthdate):
     """
     This function will check if the birthday format is valid.
@@ -106,6 +92,11 @@ def processing(process):
         print()
 
 
+def exit_program():
+    processing(['Exiting program . . .', 'Goodbye!'])
+    exit()
+
+
 def existence_checker(key, value, table):
     """
     This function will check if the value of a key exists in the table.
@@ -118,10 +109,10 @@ def existence_checker(key, value, table):
     read_data = query_object(key=key, value=value, table=table)
 
     if read_data['status']:
-        return {'exist': True, 'message': value + ' existed.'}
+        return {'exist': True, 'message': '"' + str(value) + '" existed.'}
 
     else:
-        return {'exist': False, 'message': value + ' does not exist'}
+        return {'exist': False, 'message': 'value "' + str(value) + '" does not exist.'}
 
 
 def query_object(key, value, table):
@@ -136,6 +127,9 @@ def query_object(key, value, table):
     read_data = crud.read(file='database.json', table=table, queried_key=[])
 
     if read_data['status'] and read_data['result']:
+
+        flag = False
+
         for data in read_data['result']:
 
             try:
@@ -143,13 +137,10 @@ def query_object(key, value, table):
                     return {'status': True, 'message': "", 'result': data}
 
             except KeyError:
-                return {'status': False, 'message': 'Key not found'}
+                return {'status': False, 'message': 'Key does not exist.'}
 
-            except Exception as e:
-                return {'status': False, 'message': str(e)}
-
-            else:
-                return {'status': False, 'message': 'Value not found'}
+        if not flag:
+            return {'status': False, 'message': 'Value not found'}
 
     else:
         return {'status': False, 'message': 'No data found'}
@@ -169,4 +160,4 @@ def generate_new_id(table):
         return {'status': True, 'message': "", 'result': new_id}
 
     else:
-        return {'status': False, 'message': 'No data found,'}
+        return {'status': False, 'message': 'No data found'}

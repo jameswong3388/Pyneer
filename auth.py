@@ -1,5 +1,6 @@
 import crud
 import helpers
+import user as user_page
 import admin
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
@@ -15,7 +16,7 @@ def auth_page():
     option = input('Please select an option > ')
 
     if option == "0":
-        exit_program()
+        helpers.exit_program()
     elif option == "1":
         login_page()
     elif option == "2":
@@ -34,7 +35,7 @@ def login_page():
     option = input('Please select an option >>  ')
 
     if option == "0":
-        exit_program()
+        helpers.exit_program()
 
     elif option == "1":
         username = input('Username: ')
@@ -66,12 +67,12 @@ def register_page():
     option = input('Please select an option >>  ')
 
     if option == "0":
-        exit_program()
+        helpers.exit_program()
 
     elif option == "1":
         print('--Registration--')
 
-        inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthday (YYYY-MM-DD):']
+        inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthday (YYYY-MM-DD): ']
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
@@ -81,7 +82,7 @@ def register_page():
                             "gender": '', "birthdate": ''}
 
         while True:
-            username = input('Username :')
+            username = input('Username : ')
             username_validation = helpers.existence_checker(key='username', value=username, table='users')
 
             if not username_validation['exist'] and username != '':
@@ -93,8 +94,8 @@ def register_page():
                 continue
 
         while True:
-            password = input('Password :')
-            confirm_password = input('Confirm Password:')
+            password = input('Password : ')
+            confirm_password = input('Confirm Password: ')
 
             password_validation = helpers.null_input_checker([password, confirm_password])
 
@@ -132,12 +133,6 @@ def register_page():
         register_page()
 
 
-def main_menu(user_info):
-    print('--Main Menu--')
-    print(user_info)
-    exit_program()
-
-
 def authenticator(auth_username, auth_password):
     authenticate = False
 
@@ -152,7 +147,7 @@ def authenticator(auth_username, auth_password):
                 if user['role'] == 'admin':
                     admin.admin_menu()
                 else:
-                    main_menu(user)
+                    user_page.main_menu(user)
 
         if not authenticate:
             print('Invalid username or password')
@@ -172,16 +167,3 @@ def register(inputs):
     else:
         helpers.processing(['Registering . . .', 'Registration failed!'])
         register_page()
-
-
-def exit_program():
-    helpers.processing(['Exiting program . . .', 'Goodbye!'])
-    exit()
-
-
-if __name__ == '__main__':
-    # auth_page()
-
-    a = helpers.birthdate_format_checker('2022-09-18')
-
-    print(a)

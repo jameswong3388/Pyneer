@@ -1,6 +1,8 @@
-import main
+import auth
 import helpers
 import crud
+
+invalid_input_message = "Invalid input, press enter to try again . . ."
 
 
 def admin_menu():
@@ -14,7 +16,7 @@ def admin_menu():
     option = input('Please select an option >>  ')
 
     if option == "0":
-        main.exit_program()
+        helpers.exit_program()
 
     elif option == "1":
         update_user_page()
@@ -26,10 +28,10 @@ def admin_menu():
         pass
 
     elif option == "4":
-        main.auth_page()
+        auth.auth_page()
 
     else:
-        input(main.invalid_input_message)
+        input(invalid_input_message)
         admin_menu()
 
 
@@ -42,15 +44,15 @@ def update_user_page():
     option = input('Please select an option >>  ')
 
     if option == "0":
-        main.exit_program()
+        helpers.exit_program()
 
     elif option == "1":
         username = input('Key in the username of the user you want to update: ')
 
-        username_existence = helpers.dictionary_existence_checker(key='username', value=username, table='users')
+        username_existence = helpers.existence_checker(key='username', value=username, table='users')
         print(username_existence)
 
-        if username_existence['validate']:
+        if username_existence['exist']:
             key = input('Key in the field you want to update: ')
             value = input('Key in the new value: ')
 
@@ -69,7 +71,7 @@ def update_user_page():
         admin_menu()
 
     else:
-        input(main.invalid_input_message)
+        input(invalid_input_message)
         update_user_page()
 
 
@@ -82,12 +84,12 @@ def delete_user_page():
     option = input('Please select an option >>  ')
 
     if option == "0":
-        main.exit_program()
+        helpers.exit_program()
 
     elif option == "1":
         username = input('Key in the username of the user you want to delete: ')
 
-        username_existence = helpers.dictionary_existence_checker(key='username', value=username, table='users')
+        username_existence = helpers.existence_checker(key='username', value=username, table='users')
 
         if username_existence['validate']:
 
@@ -103,8 +105,8 @@ def delete_user_page():
             delete_user_page()
 
     elif option == "2":
-        main.auth_page()
+        auth.auth_page()
 
     else:
-        input(main.invalid_input_message)
+        input(invalid_input_message)
         delete_user_page()
