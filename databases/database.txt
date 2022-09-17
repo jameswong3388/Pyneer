@@ -8,7 +8,7 @@
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": 30
+      "age": "12"
     },
     {
       "id": 2,
@@ -18,51 +18,7 @@
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": 30
-    }
-  ],
-  "foods": [
-    {
-      "id": 1,
-      "name": "Apple",
-      "price": 1.5,
-      "category": "fruit"
-    },
-    {
-      "id": 2,
-      "name": "Orange",
-      "price": 1.5,
-      "category": "fruit"
-    },
-    {
-      "id": 3,
-      "name": "Banana",
-      "price": 1.5,
-      "category": "fruit"
-    },
-    {
-      "id": 4,
-      "name": "Milk",
-      "price": 1.5,
-      "category": "drink"
-    },
-    {
-      "id": 5,
-      "name": "Water",
-      "price": 1.5,
-      "category": "drink"
-    },
-    {
-      "id": 6,
-      "name": "Bread",
-      "price": 1.5,
-      "category": "bread"
-    },
-    {
-      "id": 7,
-      "name": "Egg",
-      "price": 1.5,
-      "category": "bread"
+      "age": "123"
     }
   ]
 }
