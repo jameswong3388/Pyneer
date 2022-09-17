@@ -1,7 +1,7 @@
 # python-school-project-framework
 
 ### Intro
-This project intends to help students `(beginner - intermediate)` with their school's `Python` project
+Pyneer is a framework designed to help students with their school's Python project, especially Beginners level  and that's why is called Pyneer.
 
 This project used json/txt file to store datas and `python`'s built-in package `json` to parse the data from the files.
 
