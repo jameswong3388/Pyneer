@@ -46,3 +46,7 @@ To run the project, simply run `app.py` with `python` or `python3` depending on 
 ```
 python app.py
 ```
+
+
+## Bugs and Issues
+If you find any bugs or issues, please report it to the [issue tracker](https://github.com/jameswong3388/Pyneer/issues)
