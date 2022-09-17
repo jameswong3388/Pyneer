@@ -125,7 +125,7 @@ def exit_program():
     exit()
 
 
-def existence_checker(key, value, table):
+def existence_checker(key, value, table, file='database.json'):
     """
     This function will check if the value of a key exists in the table.
 
@@ -134,41 +134,45 @@ def existence_checker(key, value, table):
     (:param) table: Table's name
     """
 
-    read_data = query_object(key=key, value=value, table=table)
+    read_data = query(key=key, value=value, table=table, file=file)
 
-    if read_data['status']:
-        return {'exist': True, 'message': '"' + str(value) + '" existed.'}
+    if read_data['status'] and read_data['result']:
+        for data in read_data['result']:
+            if data[key] == value:
+                return {'exist': True, 'message': '"' + str(value) + '" existed.'}
 
     else:
         return {'exist': False, 'message': 'value "' + str(value) + '" does not exist.'}
 
 
-def query_object(key, value, table):
+def query(key, value, table, file='database.json'):
     """
-    This function will query the database.json file and return the result.
+    This function will query the database.json file and return a result
+    with all the data that matches the key and value.
 
     (:param) key: Dictionary key
     (:param) value: Dictionary value
     (:param) table: Table's name
+
+    if nothing is found, it will return an empty list, []
     """
 
-    read_data = crud.read(file='database.json', table=table, queried_key=[])
+    read_data = crud.read(file=file, table=table, queried_key=[])
 
     if read_data['status'] and read_data['result']:
 
-        flag = False
+        new_result = []
 
         for data in read_data['result']:
-
             try:
                 if data[key] == value:
-                    return {'status': True, 'message': "", 'result': data}
+                    new_dict = data
+                    new_result.append(new_dict)
 
             except KeyError:
                 return {'status': False, 'message': 'Key does not exist.'}
 
-        if not flag:
-            return {'status': False, 'message': 'Value not found'}
+        return {'status': True, 'message': "", 'result': new_result}
 
     else:
         return {'status': False, 'message': 'No data found'}
