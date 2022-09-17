@@ -9,7 +9,7 @@ Make sure to give it a star if you like the project 👍.
 `python` - ^3.8*
 
 ## Installation
-Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the project directly or manually download from [`Releases`](https://github.com/jameswong3388/Pyneer/releases)
+Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the project directly or manually download it from [`Releases`](https://github.com/jameswong3388/Pyneer/releases)
 ```
 git clone https://github.com/jameswong3388/Pyneer.git
 ```
