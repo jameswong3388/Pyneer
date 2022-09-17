@@ -1,7 +1,7 @@
 {
   "users": [
     {
-      "id": 1,
+      "id": "1",
       "username": "admin",
       "password": "123",
       "role": "admin",
@@ -11,14 +11,14 @@
       "age": "12"
     },
     {
-      "id": 2,
+      "id": "2",
       "username": "user",
       "password": "123",
       "role": "user",
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": "123"
+      "age": "12"
     }
   ]
 }

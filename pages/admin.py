@@ -1,5 +1,5 @@
 from pages import auth
-from api import crud
+import api
 from app import helpers
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
@@ -7,10 +7,11 @@ invalid_input_message = "Invalid input, press enter to try again . . ."
 
 def admin_menu():
     print('--Admin Menu--')
-    print('1. Update User\'s info')
-    print('2. Delete User')
-    print('3. View all Users')
-    print('4. Back')
+    print('1. Modify/Update Table\'s objects')
+    print('2. Delete Table\'s objects')
+    print('3. View Table\'s objects')
+    print('4. Create new Table')
+    print('5. Back')
     print('0. Quit')
 
     option = input('Please select an option >>  ')
@@ -19,15 +20,18 @@ def admin_menu():
         helpers.exit_program()
 
     elif option == "1":
-        update_user_page()
+        update_object()
 
     elif option == "2":
-        delete_user_page()
+        delete_object()
 
     elif option == "3":
-        view_all_users_page()
+        view_table()
 
     elif option == "4":
+        pass
+
+    elif option == "5":
         auth.auth_page()
 
     else:
@@ -35,8 +39,8 @@ def admin_menu():
         admin_menu()
 
 
-def update_user_page():
-    print('--Update User\'s info Page--')
+def update_object():
+    print('--Modify/Update Table\'s objects--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -48,34 +52,38 @@ def update_user_page():
 
     elif option == "1":
 
-        user_id = int(input('Key in the "ID" of the user you want to update: '))
+        while True:
 
-        user_id_existence = helpers.existence_checker(key='id', value=user_id, table='users')
+            table = input('Key in the table you want to update: ')
+            input_id = input('Key in the "ID" of the user you want to update: ')
 
-        if user_id_existence['exist']:
-            key = input('Key in the field you want to update: ')
-            value = input('Key in the new value: ')
+            existence = helpers.existence_checker(key='id', value=input_id, table=table)
 
-            data = {"unique_key": "id", "unique_value": user_id, "key": key, "value": value}
+            if existence['exist']:
+                break
 
-            updated_user = crud.update(table='users', data=data)
+            else:
+                input('ID or table does not exist, press enter to try again . . .')
+                continue
 
-            input(updated_user['message'])
-            update_user_page()
+        key = input('Key in the field you want to update: ')
+        value = input('Key in the new value: ')
 
-        else:
-            input(user_id_existence['message'])
-            update_user_page()
+        data = {"unique_key": "id", "unique_value": input_id, "key": key, "value": value}
+        updated_user = api.update(table='users', data=data)
+
+        input(updated_user['message'])
+        update_object()
 
     elif option == "2":
         admin_menu()
 
     else:
         input(invalid_input_message)
-        update_user_page()
+        update_object()
 
 
-def delete_user_page():
+def delete_object():
     print('--Delete User Page--')
     print('1. Continue')
     print('2. Back')
@@ -87,32 +95,35 @@ def delete_user_page():
         helpers.exit_program()
 
     elif option == "1":
-        user_id = int(input('Key in the "ID" of the user you want to delete: '))
+        while True:
 
-        user_id_existence = helpers.existence_checker(key='id', value=user_id, table='users')
+            table = input('Key in the table you want to delete from: ')
+            input_id = input('Key in the "ID" of the user you want to delete: ')
 
-        if user_id_existence['exist']:
+            existences = helpers.existence_checker(key='id', value=input_id, table=table)
 
-            data = {"unique_key": "id", "unique_value": user_id}
+            if existences['exist']:
+                break
 
-            deleted_user = crud.delete(table='users', data=data)
+            else:
+                input('ID or table does not exist, press enter to try again . . .')
+                continue
 
-            input(deleted_user['message'])
-            delete_user_page()
+        data = {"unique_key": "id", "unique_value": input_id}
+        deleted_user = api.delete(table=table, data=data)
 
-        else:
-            input(user_id_existence['message'])
-            delete_user_page()
+        input(deleted_user['message'])
+        delete_object()
 
     elif option == "2":
         auth.auth_page()
 
     else:
         input(invalid_input_message)
-        delete_user_page()
+        delete_object()
 
 
-def view_all_users_page():
+def view_table():
     print('--View all Users Page--')
     print('1. Continue')
     print('2. Back')
@@ -124,7 +135,7 @@ def view_all_users_page():
         helpers.exit_program()
 
     elif option == "1":
-        users = crud.read(table='users', queried_key=[])
+        users = api.read(table='users', queried_key=[])
 
         for user in users['result']:
             print(user)
@@ -137,4 +148,4 @@ def view_all_users_page():
 
     else:
         input(invalid_input_message)
-        view_all_users_page()
+        view_table()

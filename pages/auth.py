@@ -1,4 +1,5 @@
-from api import crud, database
+from api import database
+import api
 from app import helpers
 from pages import user, user as user_page, admin
 
@@ -138,7 +139,7 @@ def authenticator(auth_username, auth_password):
     authenticate = False
 
     queried_key = ['username', 'password', 'role']
-    read_data = crud.read(table='users', queried_key=queried_key)
+    read_data = api.read(table='users', queried_key=queried_key)
 
     if read_data['status'] and read_data['result']:
         for data in read_data['result']:
@@ -160,7 +161,7 @@ def authenticator(auth_username, auth_password):
 
 
 def register(inputs):
-    process = crud.create(table='users', data=inputs)
+    process = api.create(table='users', data=inputs)
 
     if process['status']:
         helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',

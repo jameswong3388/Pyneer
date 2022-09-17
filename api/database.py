@@ -1,4 +1,4 @@
-from api import crud
+import api
 
 
 def query(key, value, table, file='database/db.json'):
@@ -13,7 +13,7 @@ def query(key, value, table, file='database/db.json'):
     if nothing is found, it will return an empty list, []
     """
 
-    read_data = crud.read(file=file, table=table, queried_key=[])
+    read_data = api.read(file=file, table=table, queried_key=[])
 
     if read_data['status'] and read_data['result']:
 
@@ -41,7 +41,7 @@ def generate_new_id(table, file='database/db.json'):
     (:param) table: The table name
     """
 
-    read_data = crud.read(file=file, table=table, queried_key=['id'])
+    read_data = api.read(file=file, table=table, queried_key=['id'])
 
     if read_data['status'] and read_data['result']:
         new_id = read_data['result'][-1]['id'] + 1
