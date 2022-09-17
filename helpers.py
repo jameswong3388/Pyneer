@@ -1,5 +1,7 @@
 import time
 import re
+import datetime
+
 import crud
 
 
@@ -44,19 +46,36 @@ def confirm_password_checker(password, confirm_password):
     return {'validate': False, 'message': 'Password does not match'}
 
 
-def birthday_format_checker(birthdate):
+def birthdate_format_checker(birthdate):
     """
     This function will check if the birthday format is valid.
 
-    (:param) birthdate: Birthday in string
+    (:param) birthdate: Birthday in string in the format of YYYY-MM-DD
     """
 
-    regex = r'\d{4}-\d{2}-\d{2}'
+    year, month, day = birthdate.split('-')
 
-    if re.fullmatch(regex, birthdate):
-        return {'validate': True, 'message': ""}
+    print(day, month, year)
 
-    return {'validate': False, 'message': 'Invalid birthday format'}
+    validate = True
+
+    try:
+        datetime.datetime(int(year), int(month), int(day))
+
+        current_year = datetime.datetime.now().year
+        current_month = datetime.datetime.now().month
+        current_day = datetime.datetime.now().day
+
+        if int(year) > current_year or int(month) > current_month or int(day) > current_day:
+            validate = False
+
+    except ValueError:
+        validate = False
+
+    if validate:
+        return {'validate': True, 'message': "Valid birthdate."}
+    else:
+        return {'validate': False, 'message': 'Invalid date format.'}
 
 
 def gender_checker(gender):

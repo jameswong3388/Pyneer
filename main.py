@@ -73,7 +73,7 @@ def register_page():
 
         inputs = ['Email: ', 'Gender (m/f/M/F): ', 'Birthday (YYYY-MM-DD):']
 
-        validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthday_format_checker]
+        validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
         new_id = helpers.generate_new_id(table='users')
 
@@ -107,16 +107,14 @@ def register_page():
                 continue
 
         for i in inputs:
-
             while True:
-
                 user_input = input(i)
 
-                null = helpers.null_input_checker([user_input])
+                not_null = user_input != ''
 
                 validation = validation_method[inputs.index(i)](user_input)
 
-                if validation['validate'] and null['validate']:
+                if validation['validate'] and not_null:
                     validated_inputs[inputs[inputs.index(i)].split(' ')[0].lower()] = user_input
                     break
 
@@ -184,4 +182,6 @@ def exit_program():
 if __name__ == '__main__':
     # auth_page()
 
-    register_page()
+    a = helpers.birthdate_format_checker('2022-09-18')
+
+    print(a)
