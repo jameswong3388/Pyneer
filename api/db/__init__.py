@@ -444,7 +444,7 @@ def generate_new_id(collection, file='database/db.json'):
     read_data = read(collection=collection, query=['id'], file=file)
 
     if read_data['action'] and read_data['result']:
-        new_id = read_data['result'][-1]['id'] + 1
+        new_id = int(read_data['result'][-1]["id"]) + 1
         return {'action': True, 'message': "", 'result': new_id}
 
     else:
