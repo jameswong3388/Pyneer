@@ -22,7 +22,8 @@ git clone https://github.com/jameswong3388/Pyneer.git
 │   └── helpers.py
 ├── api
 │   ├── __init__.py
-│   └── database.py
+│   └── db
+│       └── __init__.py
 ├── database
 │   ├── db.json
 │   └── db.txt
@@ -41,6 +42,10 @@ git clone https://github.com/jameswong3388/Pyneer.git
 `\database` - Here contain the database related file, `db.json` or `db.txt`.
 
 `\pages` - Here contain your pages, and all of Pyneer's scaffolding pages are here.
+
+
+## API overview
+`db.*` - Database API, you can use this to easily access your database.
 
 ## Usage
 To run the project, simply run `index.py` with `python` or `python3` depending on your system.
