@@ -45,7 +45,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
 
 
 ## API overview
-`db.*` - Database API, you can use this to easily access your database.
+`db.*` - With Pyneer's database API, you can easily execute CRUD operations on your database. Pyneer uses `db.json` as the database file, but you can easily change it when calling the APIs.
 
 ## Usage
 To run the project, simply run `index.py` with `python` or `python3` depending on your system.

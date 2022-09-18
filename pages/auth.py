@@ -138,7 +138,7 @@ def authenticator(auth_username, auth_password):
     authenticate = False
 
     queried_key = ['username', 'password', 'role']
-    read_data = db.read(collection='users', queried_key=queried_key)
+    read_data = db.read(collection='users', query=queried_key)
 
     if read_data['action'] and read_data['result']:
         for data in read_data['result']:

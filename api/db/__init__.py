@@ -23,9 +23,6 @@ def insert_one(collection, data, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": e, "action": False}
 
-    except Exception as e:
-        return {"message": e, "action": False}
-
     else:
 
         if isinstance(data, dict) and data != {}:
@@ -72,9 +69,6 @@ def insert_many(collection, data, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": e, "action": False}
 
-    except Exception as e:
-        return {"message": e, "action": False}
-
     else:
 
         if isinstance(data, list) and data != []:
@@ -104,7 +98,7 @@ def insert_many(collection, data, file='database/db.json'):
             return {"message": "Failed . . .", "action": False}
 
 
-def read(collection, queried_key, file='database/db.json'):
+def read(collection, query, file='database/db.json'):
     """
     This function reads a record from the collection
 
@@ -112,8 +106,8 @@ def read(collection, queried_key, file='database/db.json'):
     (:param) collection: Collection to be used to store the data
     (:param) queried_key: An array of keys to be queried from the collection
 
-    e.g. queried_key = ['username', 'password', 'role']
-    if queried_key = [] then all the keys in the collection will be queried
+    e.g. query = ['username', 'password', 'role']
+    if query = [] then all the keys in the collection will be queried
     """
 
     new_lists = []
@@ -128,17 +122,14 @@ def read(collection, queried_key, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": str(e), "action": False}
 
-    except Exception as e:
-        return {"message": str(e), "action": False}
-
     else:
-        if isinstance(queried_key, list) and collection in loaded_data:
-            if queried_key:
+        if isinstance(query, list) and collection in loaded_data:
+            if query:
 
                 for i in loaded_data[collection]:
                     new_dict = {}
 
-                    for key in queried_key:
+                    for key in query:
 
                         if key in i and key != '':
 
@@ -152,6 +143,7 @@ def read(collection, queried_key, file='database/db.json'):
                 f.close()
 
                 return {"message": "Successfully . . . ", "action": True, "result": new_lists}
+
             else:
                 return {"message": "Successfully . . . ", "action": True, "result": loaded_data[collection]}
 
@@ -159,19 +151,21 @@ def read(collection, queried_key, file='database/db.json'):
             return {"message": "Failed . . .", "action": False, "result": []}
 
 
-def find(key, value, collection, file='database/db.json'):
+def find(query, collection, file='database/db.json'):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
     (:param) key: Dictionary key
     (:param) value: Dictionary value
+    (:param) query: The query to be used to search the database
     (:param) collection: Collection's name
 
+    e.g. query = {"key": "value"}
     if nothing is found, it will return an empty list, []
     """
 
-    read_data = read(collection=collection, queried_key=[], file=file)
+    read_data = read(collection=collection, query=[], file=file)
 
     if read_data['action'] and read_data['result']:
 
@@ -179,7 +173,7 @@ def find(key, value, collection, file='database/db.json'):
 
         for data in read_data['result']:
             try:
-                if data[key] == value:
+                if data[query['key']] == query['value']:
                     new_dict = data
                     new_result.append(new_dict)
 
@@ -215,11 +209,7 @@ def update_one(collection, data, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": str(e), "action": False}
 
-    except Exception as e:
-        return {"message": str(e), "action": False}
-
     else:
-
         flag = False
 
         if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and \
@@ -270,9 +260,6 @@ def delete_one(collection, data, file='database/db.json'):
         return {"message": str(e), "action": False}
 
     except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
-
-    except Exception as e:
         return {"message": str(e), "action": False}
 
     else:
@@ -332,9 +319,6 @@ def delete_many(collection, data, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": str(e), "action": False}
 
-    except Exception as e:
-        return {"message": str(e), "action": False}
-
     else:
 
         if isinstance(data, list) and data != [] and collection in loaded_data:
@@ -391,22 +375,15 @@ def create_collection(collection, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": str(e), "action": False}
 
-    except Exception as e:
-        return {"message": str(e), "action": False}
-
     else:
-
         try:
             if collection not in loaded_data and collection != '':
                 loaded_data[collection] = []
 
             else:
-                raise Exception("Collection already exists or Invalid collection name")
+                return {"message": "Collection already exists or Invalid collection name", "action": False}
 
         except KeyError as e:
-            return {"message": str(e), "action": False}
-
-        except Exception as e:
             return {"message": str(e), "action": False}
 
         else:
@@ -435,9 +412,6 @@ def drop_collection(collection, file='database/db.json'):
     except json.decoder.JSONDecodeError as e:
         return {"message": str(e), "action": False}
 
-    except Exception as e:
-        return {"message": str(e), "action": False}
-
     else:
 
         try:
@@ -446,12 +420,9 @@ def drop_collection(collection, file='database/db.json'):
                 loaded_data.pop(collection)
 
             else:
-                raise Exception("Collection does not exist or Invalid collection name")
+                return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
         except KeyError as e:
-            return {"message": str(e), "action": False}
-
-        except Exception as e:
             return {"message": str(e), "action": False}
 
         else:
@@ -470,8 +441,7 @@ def generate_new_id(collection, file='database/db.json'):
 
     (:param) collection: The collection name
     """
-
-    read_data = read(collection=collection, queried_key=['id'], file=file)
+    read_data = read(collection=collection, query=['id'], file=file)
 
     if read_data['action'] and read_data['result']:
         new_id = read_data['result'][-1]['id'] + 1

@@ -134,7 +134,7 @@ def existence_checker(key, value, collection, file='database/db.json'):
     (:param) table: Table's name
     """
 
-    read_data = db.find(key=key, value=value, collection=collection, file=file)
+    read_data = db.find(query={key: value}, collection=collection, file=file)
 
     if read_data['action'] and read_data['result']:
         for data in read_data['result']:

@@ -135,7 +135,7 @@ def view_collection():
         helpers.exit_program()
 
     elif option == "1":
-        users = db.read(collection='users', queried_key=[])
+        users = db.read(collection='users', query=[])
 
         for user in users['result']:
             print(user)
