@@ -2,7 +2,7 @@ import time
 import re
 import datetime
 
-from api import database
+from api import db
 
 
 def null_input_checker(inputs):
@@ -125,7 +125,7 @@ def exit_program():
     exit()
 
 
-def existence_checker(key, value, table, file='database/db.json'):
+def existence_checker(key, value, collection, file='database/db.json'):
     """
     This function will check if the value of a key exists in the table.
 
@@ -134,9 +134,9 @@ def existence_checker(key, value, table, file='database/db.json'):
     (:param) table: Table's name
     """
 
-    read_data = database.query(key=key, value=value, table=table, file=file)
+    read_data = db.find(key=key, value=value, collection=collection, file=file)
 
-    if read_data['status'] and read_data['result']:
+    if read_data['action'] and read_data['result']:
         for data in read_data['result']:
             if data[key] == value:
                 return {'exist': True, 'message': '"' + str(value) + '" existed.'}

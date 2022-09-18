@@ -1,5 +1,5 @@
 from pages import auth
-import api
+from api import db
 from app import helpers
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
@@ -7,10 +7,10 @@ invalid_input_message = "Invalid input, press enter to try again . . ."
 
 def admin_menu():
     print('--Admin Menu--')
-    print('1. Modify/Update Table\'s objects')
-    print('2. Delete Table\'s objects')
-    print('3. View Table\'s objects')
-    print('4. Create new Table')
+    print('1. Modify/Update Collection\'s documents')
+    print('2. Delete Collection\'s documents')
+    print('3. View Collection\'s documents')
+    print('4. Create new Collection')
     print('5. Back')
     print('0. Quit')
 
@@ -20,16 +20,16 @@ def admin_menu():
         helpers.exit_program()
 
     elif option == "1":
-        update_object()
+        update_document()
 
     elif option == "2":
-        delete_object()
+        delete_document()
 
     elif option == "3":
-        view_table()
+        view_collection()
 
     elif option == "4":
-        create_table()
+        create_new_collection()
 
     elif option == "5":
         auth.auth_page()
@@ -39,8 +39,8 @@ def admin_menu():
         admin_menu()
 
 
-def update_object():
-    print('--Modify/Update Table\'s objects--')
+def update_document():
+    print('--Modify/Update Collection\'s documents--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -54,37 +54,37 @@ def update_object():
 
         while True:
 
-            table = input('Key in the table you want to update: ')
+            collection = input('Key in the collection you want to update: ')
             input_id = input('Key in the "ID" of the user you want to update: ')
 
-            existence = helpers.existence_checker(key='id', value=input_id, table=table)
+            existence = helpers.existence_checker(key='id', value=input_id, collection=collection)
 
             if existence['exist']:
                 break
 
             else:
-                input('ID or table does not exist, press enter to try again . . .')
+                input('ID or collection does not exist, press enter to try again . . .')
                 continue
 
         key = input('Key in the field you want to update: ')
         value = input('Key in the new value: ')
 
         data = {"unique_key": "id", "unique_value": input_id, "key": key, "value": value}
-        updated_user = api.update(table='users', data=data)
+        updated_user = db.update_one(collection='users', data=data)
 
         input(updated_user['message'])
-        update_object()
+        update_document()
 
     elif option == "2":
         admin_menu()
 
     else:
         input(invalid_input_message)
-        update_object()
+        update_document()
 
 
-def delete_object():
-    print('--Delete Table\'s objects--')
+def delete_document():
+    print('--Delete Collection\'s objects--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -97,34 +97,34 @@ def delete_object():
     elif option == "1":
         while True:
 
-            table = input('Key in the table you want to delete from: ')
+            collection = input('Key in the collection you want to delete from: ')
             input_id = input('Key in the "ID" of the user you want to delete: ')
 
-            existences = helpers.existence_checker(key='id', value=input_id, table=table)
+            existences = helpers.existence_checker(key='id', value=input_id, collection=collection)
 
             if existences['exist']:
                 break
 
             else:
-                input('ID or table does not exist, press enter to try again . . .')
+                input('ID or collection does not exist, press enter to try again . . .')
                 continue
 
         data = {"unique_key": "id", "unique_value": input_id}
-        deleted_user = api.delete(table=table, data=data)
+        deleted_user = db.delete_one(collection=collection, data=data)
 
         input(deleted_user['message'])
-        delete_object()
+        delete_document()
 
     elif option == "2":
         auth.auth_page()
 
     else:
         input(invalid_input_message)
-        delete_object()
+        delete_document()
 
 
-def view_table():
-    print('--View Table\'s objects--')
+def view_collection():
+    print('--View Collection\'s objects--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -135,7 +135,7 @@ def view_table():
         helpers.exit_program()
 
     elif option == "1":
-        users = api.read(table='users', queried_key=[])
+        users = db.read(collection='users', queried_key=[])
 
         for user in users['result']:
             print(user)
@@ -148,11 +148,11 @@ def view_table():
 
     else:
         input(invalid_input_message)
-        view_table()
+        view_collection()
 
 
-def create_table():
-    print('--Create new Table--')
+def create_new_collection():
+    print('--Create new Collection--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -163,8 +163,8 @@ def create_table():
         helpers.exit_program()
 
     elif option == "1":
-        table = input('Key in the name of the table you want to create: ')
-        created_table = api.create_table(table=table)
+        collection = input('Key in the name of the collection you want to create: ')
+        created_table = db.create_collection(collection=collection)
 
         input(created_table['message'])
         admin_menu()
@@ -174,4 +174,4 @@ def create_table():
 
     else:
         input(invalid_input_message)
-        create_table()
+        create_new_collection()

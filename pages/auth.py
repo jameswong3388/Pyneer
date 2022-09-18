@@ -1,5 +1,4 @@
-from api import database
-import api
+from api import db
 from app import helpers
 from pages import user, user as user_page, admin
 
@@ -76,13 +75,13 @@ def register_page():
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
-        new_id = database.generate_new_id(table='users')
+        new_id = db.generate_new_id(collection='users')
 
         validated_inputs = {"id": new_id['result']}
 
         while True:
             username = input('Username : ')
-            username_validation = helpers.existence_checker(key='username', value=username, table='users')
+            username_validation = helpers.existence_checker(key='username', value=username, collection='users')
 
             if not username_validation['exist'] and username != '':
                 validated_inputs['username'] = username
@@ -139,9 +138,9 @@ def authenticator(auth_username, auth_password):
     authenticate = False
 
     queried_key = ['username', 'password', 'role']
-    read_data = api.read(table='users', queried_key=queried_key)
+    read_data = db.read(collection='users', queried_key=queried_key)
 
-    if read_data['status'] and read_data['result']:
+    if read_data['action'] and read_data['result']:
         for data in read_data['result']:
             if auth_username == data['username'] and auth_password == data['password']:
                 authenticate = True
@@ -161,9 +160,9 @@ def authenticator(auth_username, auth_password):
 
 
 def register(inputs):
-    process = api.create(table='users', data=inputs)
+    process = db.insert_one(collection='users', data=inputs)
 
-    if process['status']:
+    if process['action']:
         helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',
                             'Welcome, {}!'.format(inputs['username'])])
         user.main_menu(inputs)
