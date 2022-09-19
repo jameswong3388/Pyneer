@@ -1,7 +1,9 @@
 import json
 
+database = 'database/db.json'
 
-def insert_one(collection, document, file='database/db.json'):
+
+def insert_one(collection, document, file=database):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -47,7 +49,7 @@ def insert_one(collection, document, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def insert_many(collection, documents, file='database/db.json'):
+def insert_many(collection, documents, file=database):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -98,7 +100,7 @@ def insert_many(collection, documents, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def read(collection, query, file='database/db.json'):
+def read(collection, query, file=database):
     """
     This function reads a record from the collection
 
@@ -151,7 +153,7 @@ def read(collection, query, file='database/db.json'):
             return {"message": "Failed.", "action": False, "result": []}
 
 
-def find(query, collection, file='database/db.json'):
+def find(query, collection, file=database):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
@@ -187,7 +189,7 @@ def find(query, collection, file='database/db.json'):
         return {'action': False, 'message': 'No data found'}
 
 
-def update_one(collection, data, file='database/db.json'):
+def update_one(collection, data, file=database):
     """
     This function update a single record in the collection
 
@@ -242,7 +244,7 @@ def update_one(collection, data, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def update_many(collection, data, file='database/db.json'):
+def update_many(collection, data, file=database):
     """
     This function updates multiple records in the collection
 
@@ -307,7 +309,7 @@ def update_many(collection, data, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def delete_one(collection, data, file='database/db.json'):
+def delete_one(collection, data, file=database):
     """
     This function deletes a record from the collection
 
@@ -364,7 +366,7 @@ def delete_one(collection, data, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def delete_many(collection, data, file='database/db.json'):
+def delete_many(collection, data, file=database):
     """
     This function delete multiple records from the collection
 
@@ -427,7 +429,7 @@ def delete_many(collection, data, file='database/db.json'):
             return {"message": "Failed.", "action": False}
 
 
-def create_collection(collection, file='database/db.json'):
+def create_collection(collection, file=database):
     """
     This function creates a collection
 
@@ -463,7 +465,7 @@ def create_collection(collection, file='database/db.json'):
             return {"message": "Successfully.", "action": True}
 
 
-def drop_collection(collection, file='database/db.json'):
+def drop_collection(collection, file=database):
     """
     This function deletes a collection
 
@@ -504,7 +506,7 @@ def drop_collection(collection, file='database/db.json'):
             return {"message": "Successfully.", "action": True}
 
 
-def count(collection, query, file='database/db.json'):
+def count(collection, query, file=database):
     """
     This function counts the number of records in a collection
 
@@ -522,7 +524,7 @@ def count(collection, query, file='database/db.json'):
         return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_new_id(collection, file='database/db.json'):
+def generate_new_id(collection, file=database):
     """
     This function will get the last id of the collection and add 1 to it.
 
@@ -549,7 +551,7 @@ def db():
     return files
 
 
-def total_size(collection, file='database/db.json'):
+def total_size(collection, file=database):
     """
     This function will return the total size of the collection
 

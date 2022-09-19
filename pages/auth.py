@@ -1,6 +1,6 @@
 from api import db
 from app import helpers
-from pages import user, user as user_page, admin
+from pages import user, admin
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
 empty_input_message = "Please enter a value . . ."
@@ -148,7 +148,7 @@ def authenticator(auth_username, auth_password):
                 if data['role'] == 'admin':
                     admin.admin_menu()
                 else:
-                    user_page.main_menu(data)
+                    user.main_menu(data)
 
         if not authenticate:
             print('Invalid username or password')
