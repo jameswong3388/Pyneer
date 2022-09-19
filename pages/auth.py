@@ -160,7 +160,7 @@ def authenticator(auth_username, auth_password):
 
 
 def register(inputs):
-    process = db.insert_one(collection='users', data=inputs)
+    process = db.insert_one(collection='users', document=inputs)
 
     if process['action']:
         helpers.processing(['Registering . . .', 'Registration successful!', 'Redirecting to login page . . .',
