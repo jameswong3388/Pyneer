@@ -429,6 +429,24 @@ def delete_many(collection, data, file=database):
             return {"message": "Failed.", "action": False}
 
 
+def create_db(file):
+    """
+    This function creates a database
+    (:param) file: The file used to store the data
+    """
+
+    try:
+        f = open(file, 'x')
+        json.dump({}, f, indent=2)
+        f.close()
+
+    except FileExistsError as e:
+        return {"message": str(e), "action": False}
+
+    else:
+        return {"message": "Successfully.", "action": True}
+
+
 def create_collection(collection, file=database):
     """
     This function creates a collection
