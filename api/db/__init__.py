@@ -1,9 +1,14 @@
+"""
+Pyneer's `db.*` API
+"""
 import json
+import sys
+import os
 
-database = 'database/db.json'
+DATABASE_PATH = 'DATABASE_PATH/db.json'
 
 
-def insert_one(collection, document, file=database):
+def insert_one(collection, document, file=DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -16,7 +21,7 @@ def insert_one(collection, document, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -38,18 +43,16 @@ def insert_one(collection, document, file=database):
 
                 return {"message": "Successful.", "action": True}
 
-            else:
-                create_collection(collection=collection, file=file)
+            create_collection(collection=collection, file=file)
+            insert_one(collection=collection, document=document, file=file)
 
-                insert_one(collection=collection, document=document, file=file)
-
-                return {"message": "Successful.", "action": True}
+            return {"message": "Successful.", "action": True}
 
         else:
             return {"message": "Failed.", "action": False}
 
 
-def insert_many(collection, documents, file=database):
+def insert_many(collection, documents, file=DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -62,7 +65,7 @@ def insert_many(collection, documents, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -72,7 +75,6 @@ def insert_many(collection, documents, file=database):
         return {"message": str(e), "action": False}
 
     else:
-
         if isinstance(documents, list) and documents != []:
             if collection in loaded_data:
                 for i in documents:
@@ -89,18 +91,16 @@ def insert_many(collection, documents, file=database):
 
                 return {"message": "Successful.", "action": True}
 
-            else:
-                create_collection(collection=collection, file=file)
+            create_collection(collection=collection, file=file)
+            insert_many(collection=collection, documents=documents, file=file)
 
-                insert_many(collection=collection, documents=documents, file=file)
-
-                return {"message": "Successful.", "action": True}
+            return {"message": "Successful.", "action": True}
 
         else:
             return {"message": "Failed.", "action": False}
 
 
-def read(collection, query, file=database):
+def read(collection, query, file=DATABASE_PATH):
     """
     This function reads a record from the collection
 
@@ -115,7 +115,7 @@ def read(collection, query, file=database):
     new_lists = []
 
     try:
-        f = open(file, 'r')
+        f = open(file, mode='r', encoding='utf-8')
         loaded_data = json.loads(f.read())
 
     except FileNotFoundError as e:
@@ -132,9 +132,7 @@ def read(collection, query, file=database):
                     new_dict = {}
 
                     for key in query:
-
                         if key in i and key != '':
-
                             new_dict[key] = i[key]
 
                         else:
@@ -146,19 +144,18 @@ def read(collection, query, file=database):
 
                 return {"message": "Successful.", "action": True, "result": new_lists}
 
-            else:
-                return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
+            return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
 
         else:
             return {"message": "Failed.", "action": False, "result": []}
 
 
-def find(query, collection, file=database):
+def find(query, collection, file=DATABASE_PATH):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
-    (:param) query: The query to be used to search the database
+    (:param) query: The query to be used to search the DATABASE_PATH
     (:param) collection: Collection's name
 
     e.g. query = {"key": "...", "value": "..."}
@@ -175,6 +172,7 @@ def find(query, collection, file=database):
             try:
                 if data[query['key']] == query['value']:
                     new_dict = data
+
                     new_result.append(new_dict)
 
             except KeyError:
@@ -189,7 +187,7 @@ def find(query, collection, file=database):
         return {'action': False, 'message': 'No data found'}
 
 
-def update_one(collection, data, file=database):
+def update_one(collection, data, file=DATABASE_PATH):
     """
     This function update a single record in the collection
 
@@ -203,7 +201,7 @@ def update_one(collection, data, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -230,9 +228,10 @@ def update_one(collection, data, file=database):
 
                     else:
 
-                        with open(file, 'w+') as f:
-                            f.seek(0)
-                            json.dump(loaded_data, f, indent=2)
+                        f = open(file, mode='w+', encoding='utf-8')
+                        f.seek(0)
+                        json.dump(loaded_data, f, indent=2)
+
                         f.close()
 
                         return {"message": "Successful.", "action": True}
@@ -244,7 +243,7 @@ def update_one(collection, data, file=database):
             return {"message": "Failed.", "action": False}
 
 
-def update_many(collection, data, file=database):
+def update_many(collection, data, file=DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
@@ -258,7 +257,7 @@ def update_many(collection, data, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -285,9 +284,10 @@ def update_many(collection, data, file=database):
                                     return {"message": "Invalid Key.", "action": False}
 
                                 else:
-                                    with open(file, 'w+') as f:
-                                        f.seek(0)
-                                        json.dump(loaded_data, f, indent=2)
+                                    f = open(file, mode='w+', encoding='utf-8')
+                                    f.seek(0)
+                                    json.dump(loaded_data, f, indent=2)
+                                    f.close()
 
                                     flag = True
 
@@ -296,9 +296,6 @@ def update_many(collection, data, file=database):
 
                         except KeyError:
                             return {"message": "Invalid Key.", "action": False}
-
-            f.close()
-
             if flag:
                 return {"message": "Successful.", "action": True}
 
@@ -309,7 +306,7 @@ def update_many(collection, data, file=database):
             return {"message": "Failed.", "action": False}
 
 
-def delete_one(collection, data, file=database):
+def delete_one(collection, data, file=DATABASE_PATH):
     """
     This function deletes a record from the collection
 
@@ -322,7 +319,7 @@ def delete_one(collection, data, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -350,7 +347,7 @@ def delete_one(collection, data, file=database):
                                 return {"message": e, "action": False}
 
                             else:
-                                f = open(file, 'w')
+                                f = open(file, mode='w', encoding='utf-8')
                                 json.dump(loaded_data, f, indent=2)
                                 f.close()
 
@@ -366,7 +363,7 @@ def delete_one(collection, data, file=database):
             return {"message": "Failed.", "action": False}
 
 
-def delete_many(collection, data, file=database):
+def delete_many(collection, data, file=DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
@@ -379,7 +376,7 @@ def delete_many(collection, data, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -407,7 +404,7 @@ def delete_many(collection, data, file=database):
                                     return {"message": str(e), "action": False}
 
                                 else:
-                                    f = open(file, 'w')
+                                    f = open(file, mode='w', encoding='utf-8')
                                     json.dump(loaded_data, f, indent=2)
                                     f.close()
 
@@ -431,12 +428,12 @@ def delete_many(collection, data, file=database):
 
 def create_db(file):
     """
-    This function creates a database
+    This function creates a DATABASE_PATH
     (:param) file: The file used to store the data
     """
 
     try:
-        f = open(file, 'x')
+        f = open(file, mode='x', encoding='utf-8')
         json.dump({}, f, indent=2)
         f.close()
 
@@ -447,7 +444,7 @@ def create_db(file):
         return {"message": "Successfully.", "action": True}
 
 
-def create_collection(collection, file=database):
+def create_collection(collection, file=DATABASE_PATH):
     """
     This function creates a collection
 
@@ -455,7 +452,7 @@ def create_collection(collection, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -483,7 +480,7 @@ def create_collection(collection, file=database):
             return {"message": "Successfully.", "action": True}
 
 
-def drop_collection(collection, file=database):
+def drop_collection(collection, file=DATABASE_PATH):
     """
     This function deletes a collection
 
@@ -491,7 +488,7 @@ def drop_collection(collection, file=database):
     """
 
     try:
-        f = open(file, 'r+')
+        f = open(file, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -515,16 +512,15 @@ def drop_collection(collection, file=database):
             return {"message": str(e), "action": False}
 
         else:
-            with open(file, 'w') as f:
+            f = open(file, mode='w+', encoding='utf-8')
+            json.dump(loaded_data, f, indent=2)
 
-                json.dump(loaded_data, f, indent=2)
+            f.close()
 
-                f.close()
-
-            return {"message": "Successfully.", "action": True}
+    return {"message": "Successfully.", "action": True}
 
 
-def count(collection, query, file=database):
+def count(collection, query, file=DATABASE_PATH):
     """
     This function counts the number of records in a collection
 
@@ -538,11 +534,10 @@ def count(collection, query, file=database):
     if read_data['action']:
         return {"message": "Successfully.", "action": True, "count": len(read_data['result'])}
 
-    else:
-        return {"message": "Collection does not exist or Invalid collection name", "action": False}
+    return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_new_id(collection, file=database):
+def generate_new_id(collection, file=DATABASE_PATH):
     """
     This function will get the last id of the collection and add 1 to it.
 
@@ -554,22 +549,20 @@ def generate_new_id(collection, file=database):
         new_id = int(read_data['result'][-1]["id"]) + 1
         return {'action': True, 'message': "", 'result': new_id}
 
-    else:
-        return {'action': False, 'message': 'No data found.'}
+    return {'action': False, 'message': 'No data found.'}
 
 
-def db():
+def __init__():
     """
-    This function will return all the database in 'database' folder
+    This function will return all the DATABASE_PATH in 'DATABASE_PATH' folder
     """
-    import os
 
-    files = os.listdir('database')
+    files = os.listdir('DATABASE_PATH')
 
     return files
 
 
-def total_size(collection, file=database):
+def total_size(collection, file=DATABASE_PATH):
     """
     This function will return the total size of the collection
 
@@ -578,12 +571,9 @@ def total_size(collection, file=database):
     return the size in bytes
     """
 
-    import sys
-
     loaded_data = read(collection=collection, file=file, query=[])
 
     if loaded_data['action']:
         return {'action': True, 'message': '', 'result': str(sys.getsizeof(loaded_data['result'])) + ' bytes'}
 
-    else:
-        return {'action': False, 'message': 'No data found.'}
+    return {'action': False, 'message': 'No data found.'}
