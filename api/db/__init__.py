@@ -5,7 +5,7 @@ import json
 import sys
 import os
 
-DATABASE_PATH = 'DATABASE_PATH/db.json'
+DATABASE_PATH = 'database/db.json'
 
 
 def insert_one(collection, document, file=DATABASE_PATH):
@@ -147,7 +147,7 @@ def read(collection, query, file=DATABASE_PATH):
             return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
 
         else:
-            return {"message": "Failed.", "action": False, "result": []}
+            return {"message": "Failed.", "action": False}
 
 
 def find(query, collection, file=DATABASE_PATH):
@@ -296,6 +296,10 @@ def update_many(collection, data, file=DATABASE_PATH):
 
                         except KeyError:
                             return {"message": "Invalid Key.", "action": False}
+
+                else:
+                    return {"message": "Invalid Key.", "action": False}
+
             if flag:
                 return {"message": "Successful.", "action": True}
 
@@ -358,6 +362,9 @@ def delete_one(collection, data, file=DATABASE_PATH):
 
                 if not flag:
                     return {"message": "Failed.", "action": False}
+
+            else:
+                return {"message": "Failed.", "action": False}
 
         else:
             return {"message": "Failed.", "action": False}
@@ -428,7 +435,7 @@ def delete_many(collection, data, file=DATABASE_PATH):
 
 def create_db(file):
     """
-    This function creates a DATABASE_PATH
+    This function creates a database file
     (:param) file: The file used to store the data
     """
 
