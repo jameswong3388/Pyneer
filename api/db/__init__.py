@@ -201,7 +201,7 @@ def update_one(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -257,7 +257,7 @@ def update_many(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -323,7 +323,7 @@ def delete_one(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -383,7 +383,7 @@ def delete_many(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
