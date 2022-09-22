@@ -564,7 +564,7 @@ def db():
     This function will return all the DATABASE_PATH in 'DATABASE_PATH' folder
     """
 
-    files = os.listdir('DATABASE_PATH')
+    files = os.listdir('database')
 
     return files
 
