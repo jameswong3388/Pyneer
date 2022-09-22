@@ -559,7 +559,7 @@ def generate_new_id(collection, file=DATABASE_PATH):
     return {'action': False, 'message': 'No data found.'}
 
 
-def __init__():
+def db():
     """
     This function will return all the DATABASE_PATH in 'DATABASE_PATH' folder
     """
