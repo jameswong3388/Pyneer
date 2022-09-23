@@ -125,7 +125,7 @@ def exit_program():
     exit()
 
 
-def existence_checker(key, value, collection, file='database/db.json'):
+def existence_checker(key, value, collection, file_path='database/db.json'):
     """
     This function will check if the value of a key exists in the table.
 
@@ -134,7 +134,7 @@ def existence_checker(key, value, collection, file='database/db.json'):
     (:param) table: Table's name
     """
 
-    read_data = db.find(query={"key": key, "value": value}, collection=collection, file=file)
+    read_data = db.find(query={"key": key, "value": value}, collection=collection, file_path=file_path)
 
     if read_data['action'] and read_data['result']:
         for data in read_data['result']:

@@ -8,7 +8,7 @@ import os
 DATABASE_PATH = 'database/db.json'
 
 
-def insert_one(collection, document, file=DATABASE_PATH):
+def insert_one(collection, document, file_path=DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -21,7 +21,7 @@ def insert_one(collection, document, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file_path, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -43,8 +43,8 @@ def insert_one(collection, document, file=DATABASE_PATH):
 
                 return {"message": "Successful.", "action": True}
 
-            create_collection(collection=collection, file=file)
-            insert_one(collection=collection, document=document, file=file)
+            create_collection(collection=collection, file_path=file_path)
+            insert_one(collection=collection, document=document, file_path=file_path)
 
             return {"message": "Successful.", "action": True}
 
@@ -52,7 +52,7 @@ def insert_one(collection, document, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def insert_many(collection, documents, file=DATABASE_PATH):
+def insert_many(collection, documents, file_path=DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -65,7 +65,7 @@ def insert_many(collection, documents, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file_path, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -91,8 +91,8 @@ def insert_many(collection, documents, file=DATABASE_PATH):
 
                 return {"message": "Successful.", "action": True}
 
-            create_collection(collection=collection, file=file)
-            insert_many(collection=collection, documents=documents, file=file)
+            create_collection(collection=collection, file_path=file_path)
+            insert_many(collection=collection, documents=documents, file_path=file_path)
 
             return {"message": "Successful.", "action": True}
 
@@ -100,7 +100,7 @@ def insert_many(collection, documents, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def read(collection, query, file=DATABASE_PATH):
+def read(collection, query, file_path=DATABASE_PATH):
     """
     This function reads a record from the collection
 
@@ -115,7 +115,7 @@ def read(collection, query, file=DATABASE_PATH):
     new_lists = []
 
     try:
-        f = open(file, mode='r', encoding='utf-8')
+        f = open(file_path, mode='r', encoding='utf-8')
         loaded_data = json.loads(f.read())
 
     except FileNotFoundError as e:
@@ -150,7 +150,7 @@ def read(collection, query, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def find(query, collection, file=DATABASE_PATH):
+def find(query, collection, file_path=DATABASE_PATH):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
@@ -163,7 +163,7 @@ def find(query, collection, file=DATABASE_PATH):
     if query = {} then all the documents in the collection will be returned
     """
 
-    read_data = read(collection=collection, query=[], file=file)
+    read_data = read(collection=collection, query=[], file_path=file_path)
 
     if read_data['action'] and read_data['result'] and query != {}:
         new_result = []
@@ -187,7 +187,7 @@ def find(query, collection, file=DATABASE_PATH):
         return {'action': False, 'message': 'No data found'}
 
 
-def update_one(collection, data, file=DATABASE_PATH):
+def update_one(collection, data, file_path=DATABASE_PATH):
     """
     This function update a single record in the collection
 
@@ -201,7 +201,7 @@ def update_one(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r', encoding='utf-8')
+        f = open(file_path, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -228,7 +228,7 @@ def update_one(collection, data, file=DATABASE_PATH):
 
                     else:
 
-                        f = open(file, mode='w+', encoding='utf-8')
+                        f = open(file_path, mode='w+', encoding='utf-8')
                         f.seek(0)
                         json.dump(loaded_data, f, indent=2)
 
@@ -243,7 +243,7 @@ def update_one(collection, data, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def update_many(collection, data, file=DATABASE_PATH):
+def update_many(collection, data, file_path=DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
@@ -257,7 +257,7 @@ def update_many(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r', encoding='utf-8')
+        f = open(file_path, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -284,7 +284,7 @@ def update_many(collection, data, file=DATABASE_PATH):
                                     return {"message": "Invalid Key.", "action": False}
 
                                 else:
-                                    f = open(file, mode='w+', encoding='utf-8')
+                                    f = open(file_path, mode='w+', encoding='utf-8')
                                     f.seek(0)
                                     json.dump(loaded_data, f, indent=2)
                                     f.close()
@@ -310,7 +310,7 @@ def update_many(collection, data, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def delete_one(collection, data, file=DATABASE_PATH):
+def delete_one(collection, data, file_path=DATABASE_PATH):
     """
     This function deletes a record from the collection
 
@@ -323,7 +323,7 @@ def delete_one(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r', encoding='utf-8')
+        f = open(file_path, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -351,7 +351,7 @@ def delete_one(collection, data, file=DATABASE_PATH):
                                 return {"message": e, "action": False}
 
                             else:
-                                f = open(file, mode='w', encoding='utf-8')
+                                f = open(file_path, mode='w', encoding='utf-8')
                                 json.dump(loaded_data, f, indent=2)
                                 f.close()
 
@@ -370,7 +370,7 @@ def delete_one(collection, data, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def delete_many(collection, data, file=DATABASE_PATH):
+def delete_many(collection, data, file_path=DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
@@ -383,7 +383,7 @@ def delete_many(collection, data, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r', encoding='utf-8')
+        f = open(file_path, mode='r', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -411,7 +411,7 @@ def delete_many(collection, data, file=DATABASE_PATH):
                                     return {"message": str(e), "action": False}
 
                                 else:
-                                    f = open(file, mode='w', encoding='utf-8')
+                                    f = open(file_path, mode='w', encoding='utf-8')
                                     json.dump(loaded_data, f, indent=2)
                                     f.close()
 
@@ -433,14 +433,14 @@ def delete_many(collection, data, file=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def create_db(file):
+def create_db(file_path):
     """
     This function creates a database file
     (:param) file: The file used to store the data
     """
 
     try:
-        f = open(file, mode='x', encoding='utf-8')
+        f = open(file_path, mode='x', encoding='utf-8')
         json.dump({}, f, indent=2)
         f.close()
 
@@ -451,7 +451,7 @@ def create_db(file):
         return {"message": "Successfully.", "action": True}
 
 
-def create_collection(collection, file=DATABASE_PATH):
+def create_collection(collection, file_path=DATABASE_PATH):
     """
     This function creates a collection
 
@@ -459,7 +459,7 @@ def create_collection(collection, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file_path, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
 
     except FileNotFoundError as e:
@@ -487,7 +487,7 @@ def create_collection(collection, file=DATABASE_PATH):
             return {"message": "Successfully.", "action": True}
 
 
-def drop_collection(collection, file=DATABASE_PATH):
+def drop_collection(collection, file_path=DATABASE_PATH):
     """
     This function deletes a collection
 
@@ -495,7 +495,7 @@ def drop_collection(collection, file=DATABASE_PATH):
     """
 
     try:
-        f = open(file, mode='r+', encoding='utf-8')
+        f = open(file_path, mode='r+', encoding='utf-8')
         loaded_data = json.load(f)
         f.close()
 
@@ -519,7 +519,7 @@ def drop_collection(collection, file=DATABASE_PATH):
             return {"message": str(e), "action": False}
 
         else:
-            f = open(file, mode='w+', encoding='utf-8')
+            f = open(file_path, mode='w+', encoding='utf-8')
             json.dump(loaded_data, f, indent=2)
 
             f.close()
@@ -527,7 +527,7 @@ def drop_collection(collection, file=DATABASE_PATH):
     return {"message": "Successfully.", "action": True}
 
 
-def count(collection, query, file=DATABASE_PATH):
+def count(collection, query, file_path=DATABASE_PATH):
     """
     This function counts the number of records in a collection
 
@@ -536,7 +536,7 @@ def count(collection, query, file=DATABASE_PATH):
     if query = {} then it counts all the documents in the collection
     """
 
-    read_data = find(query=query, collection=collection, file=file)
+    read_data = find(query=query, collection=collection, file_path=file_path)
 
     if read_data['action']:
         return {"message": "Successfully.", "action": True, "count": len(read_data['result'])}
@@ -544,13 +544,13 @@ def count(collection, query, file=DATABASE_PATH):
     return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_new_id(collection, file=DATABASE_PATH):
+def generate_new_id(collection, file_path=DATABASE_PATH):
     """
     This function will get the last id of the collection and add 1 to it.
 
     (:param) collection: The collection name
     """
-    read_data = read(collection=collection, query=['id'], file=file)
+    read_data = read(collection=collection, query=['id'], file_path=file_path)
 
     if read_data['action'] and read_data['result']:
         new_id = int(read_data['result'][-1]["id"]) + 1
@@ -569,7 +569,7 @@ def db():
     return files
 
 
-def total_size(collection, file=DATABASE_PATH):
+def total_size(collection, file_path=DATABASE_PATH):
     """
     This function will return the total size of the collection
 
@@ -578,7 +578,7 @@ def total_size(collection, file=DATABASE_PATH):
     return the size in bytes
     """
 
-    loaded_data = read(collection=collection, file=file, query=[])
+    loaded_data = read(collection=collection, query=[], file_path=file_path)
 
     if loaded_data['action']:
         return {'action': True, 'message': '', 'result': str(sys.getsizeof(loaded_data['result'])) + ' bytes'}
