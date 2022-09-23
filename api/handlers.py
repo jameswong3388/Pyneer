@@ -1,6 +1,3 @@
-import json
-
-
 class file_handler:
     def __init__(self, file_path, mode, encoding='utf-8'):
         self.filename = file_path
@@ -18,10 +15,6 @@ class file_handler:
             return self.file
 
         except FileNotFoundError as e:
-            self.error = str(e)
-            return self.error
-
-        except json.decoder.JSONDecodeError as e:
             self.error = str(e)
             return self.error
 
