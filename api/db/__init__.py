@@ -28,22 +28,22 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-        if isinstance(document, dict) and document != {}:
-            if collection in loaded_data:
-                loaded_data[collection].append(document)
+        if not isinstance(document, dict) or document == {}:
+            return {"message": "Failed.", "action": False}
 
-                f['file'].seek(0)
-                json.dump(loaded_data, f['file'], indent=2)
+        if collection in loaded_data:
+            loaded_data[collection].append(document)
 
-                return {"message": "Successful.", "action": True}
-
-            create_collection(collection=collection, file_path=file_path)
-            insert_one(collection=collection, document=document, file_path=file_path)
+            f['file'].seek(0)
+            json.dump(loaded_data, f['file'], indent=2)
 
             return {"message": "Successful.", "action": True}
 
         else:
-            return {"message": "Failed.", "action": False}
+            create_collection(collection=collection, file_path=file_path)
+            insert_one(collection=collection, document=document, file_path=file_path)
+
+            return {"message": "Successful.", "action": True}
 
 
 def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
