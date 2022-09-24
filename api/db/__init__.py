@@ -7,10 +7,10 @@ import os
 
 from api import handlers
 
-DATABASE_PATH = 'database/db.json'
+DEFAULT_DATABASE_PATH = 'database/db.json'
 
 
-def insert_one(collection, document, file_path=DATABASE_PATH):
+def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -46,7 +46,7 @@ def insert_one(collection, document, file_path=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def insert_many(collection, documents, file_path=DATABASE_PATH):
+def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     """
     This function create single record in the collection
     (:param) file: File used to store the data
@@ -87,7 +87,7 @@ def insert_many(collection, documents, file_path=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def read(collection, query, file_path=DATABASE_PATH):
+def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
     """
     This function reads a record from the collection
 
@@ -130,12 +130,12 @@ def read(collection, query, file_path=DATABASE_PATH):
             return {"message": "Failed.", "action": False}
 
 
-def find(query, collection, file_path=DATABASE_PATH):
+def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
-    (:param) query: The query to be used to search the DATABASE_PATH
+    (:param) query: The query to be used to search the database
     (:param) collection: Collection's name
 
     e.g. query = {"key": "...", "value": "..."}
@@ -167,7 +167,7 @@ def find(query, collection, file_path=DATABASE_PATH):
         return {'action': False, 'message': 'No data found'}
 
 
-def update_one(collection, data, file_path=DATABASE_PATH):
+def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     """
     This function update a single record in the collection
 
@@ -216,7 +216,7 @@ def update_one(collection, data, file_path=DATABASE_PATH):
         return {"message": "Failed.", "action": False}
 
 
-def update_many(collection, data, file_path=DATABASE_PATH):
+def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
@@ -277,7 +277,7 @@ def update_many(collection, data, file_path=DATABASE_PATH):
         return {"message": "Failed.", "action": False}
 
 
-def delete_one(collection, data, file_path=DATABASE_PATH):
+def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     """
     This function deletes a record from the collection
 
@@ -331,7 +331,7 @@ def delete_one(collection, data, file_path=DATABASE_PATH):
         return {"message": "Failed.", "action": False}
 
 
-def delete_many(collection, data, file_path=DATABASE_PATH):
+def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
@@ -406,7 +406,7 @@ def create_db(file_path):
         return {"message": "Successfully.", "action": True}
 
 
-def create_collection(collection, file_path=DATABASE_PATH):
+def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function creates a collection
 
@@ -437,7 +437,7 @@ def create_collection(collection, file_path=DATABASE_PATH):
             return {"message": "Successfully.", "action": True}
 
 
-def drop_collection(collection, file_path=DATABASE_PATH):
+def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function deletes a collection
 
@@ -469,7 +469,7 @@ def drop_collection(collection, file_path=DATABASE_PATH):
         return {"message": "Successfully.", "action": True}
 
 
-def count(collection, query, file_path=DATABASE_PATH):
+def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
     """
     This function counts the number of records in a collection
 
@@ -486,7 +486,7 @@ def count(collection, query, file_path=DATABASE_PATH):
     return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_new_id(collection, file_path=DATABASE_PATH):
+def generate_new_id(collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function will get the last id of the collection and add 1 to it.
 
@@ -503,7 +503,7 @@ def generate_new_id(collection, file_path=DATABASE_PATH):
 
 def db():
     """
-    This function will return all the DATABASE_PATH in 'DATABASE_PATH' folder
+    This function will return all the databases in 'database' folder
     """
 
     files = os.listdir('database')
@@ -511,7 +511,7 @@ def db():
     return files
 
 
-def total_size(collection, file_path=DATABASE_PATH):
+def total_size(collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function will return the total size of the collection
 
