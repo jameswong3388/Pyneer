@@ -24,7 +24,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
 
 ```
 .
-├── app.py
+├── main.py
 ├── app
 │   └── helpers.py
 ├── api
@@ -41,7 +41,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
     └── user.py
 ```
 
-`index.py` - Here is where Pyneer is initialized.
+`main.py` - Here is where Pyneer is initialized.
 
 `\app` - Here contain all of your application logic.
 
@@ -74,7 +74,7 @@ db.insert_one(collection="users", document={
 To run the project, simply run `index.py` with `python` or `python3` depending on your system.
 
 ```bash
-python index.py
+python main.py
 ```
 
 ## Bugs and Issues
