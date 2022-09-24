@@ -29,8 +29,9 @@ git clone https://github.com/jameswong3388/Pyneer.git
 │   └── helpers.py
 ├── api
 │   ├── __init__.py
-│   └── db
-│       └── __init__.py
+│   ├── db
+│   │    └── __init__.py
+│   └── handlers
 ├── database
 │   ├── db.json
 │   └── db.txt
