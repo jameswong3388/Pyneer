@@ -23,29 +23,27 @@ def insert_one(collection, document, file_path=DATABASE_PATH):
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
-        try:
-            loaded_data = json.load(f)
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-        except json.decoder.JSONDecodeError as e:
-            return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-        else:
-            if isinstance(document, dict) and document != {}:
-                if collection in loaded_data:
-                    loaded_data[collection].append(document)
+        if isinstance(document, dict) and document != {}:
+            if collection in loaded_data:
+                loaded_data[collection].append(document)
 
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
-
-                    return {"message": "Successful.", "action": True}
-
-                create_collection(collection=collection, file_path=file_path)
-                insert_one(collection=collection, document=document, file_path=file_path)
+                f['file'].seek(0)
+                json.dump(loaded_data, f['file'], indent=2)
 
                 return {"message": "Successful.", "action": True}
 
-            else:
-                return {"message": "Failed.", "action": False}
+            create_collection(collection=collection, file_path=file_path)
+            insert_one(collection=collection, document=document, file_path=file_path)
+
+            return {"message": "Successful.", "action": True}
+
+        else:
+            return {"message": "Failed.", "action": False}
 
 
 def insert_many(collection, documents, file_path=DATABASE_PATH):
@@ -61,34 +59,32 @@ def insert_many(collection, documents, file_path=DATABASE_PATH):
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
-        try:
-            loaded_data = json.load(f)
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-        except json.decoder.JSONDecodeError as e:
-            return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-        else:
-            if isinstance(documents, list) and documents != []:
-                if collection in loaded_data:
-                    for i in documents:
-                        if i != {}:
-                            loaded_data[collection].append(i)
+        if isinstance(documents, list) and documents != []:
+            if collection in loaded_data:
+                for i in documents:
+                    if i != {}:
+                        loaded_data[collection].append(i)
 
-                        else:
-                            return {"message": "Failed.", "action": False}
+                    else:
+                        return {"message": "Failed.", "action": False}
 
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
-
-                    return {"message": "Successful.", "action": True}
-
-                create_collection(collection=collection, file_path=file_path)
-                insert_many(collection=collection, documents=documents, file_path=file_path)
+                f['file'].seek(0)
+                json.dump(loaded_data, f['file'], indent=2)
 
                 return {"message": "Successful.", "action": True}
 
-            else:
-                return {"message": "Failed.", "action": False}
+            create_collection(collection=collection, file_path=file_path)
+            insert_many(collection=collection, documents=documents, file_path=file_path)
+
+            return {"message": "Successful.", "action": True}
+
+        else:
+            return {"message": "Failed.", "action": False}
 
 
 def read(collection, query, file_path=DATABASE_PATH):
@@ -106,34 +102,32 @@ def read(collection, query, file_path=DATABASE_PATH):
     new_lists = []
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
-        try:
-            loaded_data = json.load(f)
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-        except json.decoder.JSONDecodeError as e:
-            return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
+
+        if isinstance(query, list) and collection in loaded_data:
+            if query:
+
+                for i in loaded_data[collection]:
+                    new_dict = {}
+
+                    for key in query:
+                        if key in i and key != '':
+                            new_dict[key] = i[key]
+
+                        else:
+                            return {"message": "Invalid Key.", "action": False}
+
+                    new_lists.append(new_dict)
+
+                return {"message": "Successful.", "action": True, "result": new_lists}
+
+            return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
 
         else:
-            if isinstance(query, list) and collection in loaded_data:
-                if query:
-
-                    for i in loaded_data[collection]:
-                        new_dict = {}
-
-                        for key in query:
-                            if key in i and key != '':
-                                new_dict[key] = i[key]
-
-                            else:
-                                return {"message": "Invalid Key.", "action": False}
-
-                        new_lists.append(new_dict)
-
-                    return {"message": "Successful.", "action": True, "result": new_lists}
-
-                return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
-
-            else:
-                return {"message": "Failed.", "action": False}
+            return {"message": "Failed.", "action": False}
 
 
 def find(query, collection, file_path=DATABASE_PATH):
@@ -186,46 +180,40 @@ def update_one(collection, data, file_path=DATABASE_PATH):
     and key and value is the key value to be updated.
     """
 
-    try:
-        f = open(file_path, mode='r', encoding='utf-8')
-        loaded_data = json.load(f)
-        f.close()
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+    flag = False
+
+    if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and \
+            data['unique_value'] != '':
+        for i in loaded_data[collection]:
+            if data['key'] != '' and data['value'] and i[data['unique_key']] == data['unique_value'] \
+                    and data['key'] in i:
+
+                try:
+                    i[data['key']] = data['value']
+
+                except KeyError:
+                    return {"message": "Invalid Key.", "action": False}
+
+                else:
+                    file = open(file_path, mode='w+', encoding='utf-8')
+                    file.seek(0)
+                    json.dump(loaded_data, file, indent=2)
+
+                    file.close()
+
+                    return {"message": "Successful.", "action": True}
+
+        if not flag:
+            return {"message": "Failed.", "action": False}
 
     else:
-        flag = False
-
-        if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and \
-                data['unique_value'] != '':
-            for i in loaded_data[collection]:
-                if data['key'] != '' and data['value'] and i[data['unique_key']] == data['unique_value'] \
-                        and data['key'] in i:
-
-                    try:
-                        i[data['key']] = data['value']
-
-                    except KeyError:
-                        return {"message": "Invalid Key.", "action": False}
-
-                    else:
-                        f = open(file_path, mode='w+', encoding='utf-8')
-                        f.seek(0)
-                        json.dump(loaded_data, f, indent=2)
-
-                        f.close()
-
-                        return {"message": "Successful.", "action": True}
-
-            if not flag:
-                return {"message": "Failed.", "action": False}
-
-        else:
-            return {"message": "Failed.", "action": False}
+        return {"message": "Failed.", "action": False}
 
 
 def update_many(collection, data, file_path=DATABASE_PATH):
@@ -241,58 +229,52 @@ def update_many(collection, data, file_path=DATABASE_PATH):
     and key and value is the key value to be updated.
     """
 
-    try:
-        f = open(file_path, mode='r', encoding='utf-8')
-        loaded_data = json.load(f)
-        f.close()
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+    flag = False
 
-    else:
-        flag = False
+    if isinstance(data, list) and data != [] and collection in loaded_data:
+        for i in data:
+            if i['unique_key'] != '' and i['unique_value'] != '' and i['key'] != '' and i['value'] != '':
+                for j in loaded_data[collection]:
+                    try:
+                        if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
 
-        if isinstance(data, list) and data != [] and collection in loaded_data:
-            for i in data:
-                if i['unique_key'] != '' and i['unique_value'] != '' and i['key'] != '' and i['value'] != '':
-                    for j in loaded_data[collection]:
-                        try:
-                            if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
+                            try:
+                                j[i['key']] = i['value']
 
-                                try:
-                                    j[i['key']] = i['value']
-
-                                except KeyError:
-                                    return {"message": "Invalid Key.", "action": False}
-
-                                else:
-                                    f = open(file_path, mode='w+', encoding='utf-8')
-                                    f.seek(0)
-                                    json.dump(loaded_data, f, indent=2)
-                                    f.close()
-
-                                    flag = True
+                            except KeyError:
+                                return {"message": "Invalid Key.", "action": False}
 
                             else:
-                                flag = False
+                                file = open(file_path, mode='w+', encoding='utf-8')
+                                file.seek(0)
+                                json.dump(loaded_data, loaded_data, indent=2)
+                                file.close()
 
-                        except KeyError:
-                            return {"message": "Invalid Key.", "action": False}
+                                flag = True
 
-                else:
-                    return {"message": "Invalid Key.", "action": False}
+                        else:
+                            flag = False
 
-            if flag:
-                return {"message": "Successful.", "action": True}
+                    except KeyError:
+                        return {"message": "Invalid Key.", "action": False}
 
             else:
-                return {"message": "Failed.", "action": False}
+                return {"message": "Invalid Key.", "action": False}
+
+        if flag:
+            return {"message": "Successful.", "action": True}
 
         else:
             return {"message": "Failed.", "action": False}
+
+    else:
+        return {"message": "Failed.", "action": False}
 
 
 def delete_one(collection, data, file_path=DATABASE_PATH):
@@ -307,52 +289,46 @@ def delete_one(collection, data, file_path=DATABASE_PATH):
     where unique_key and unique_value  is the key value used to identify the record to be deleted.
     """
 
-    try:
-        f = open(file_path, mode='r', encoding='utf-8')
-        loaded_data = json.load(f)
-        f.close()
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+    flag = False
 
-    else:
-        flag = False
+    if isinstance(data, dict) and collection in loaded_data:
 
-        if isinstance(data, dict) and collection in loaded_data:
+        if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
 
-            if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
+            for i in loaded_data[collection]:
+                try:
+                    if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
 
-                for i in loaded_data[collection]:
-                    try:
-                        if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
+                        try:
+                            loaded_data[collection].remove(i)
 
-                            try:
-                                loaded_data[collection].remove(i)
+                        except ValueError as e:
+                            return {"message": e, "action": False}
 
-                            except ValueError as e:
-                                return {"message": e, "action": False}
+                        else:
+                            file = open(file_path, mode='w', encoding='utf-8')
+                            json.dump(loaded_data, file, indent=2)
+                            file.close()
 
-                            else:
-                                f = open(file_path, mode='w', encoding='utf-8')
-                                json.dump(loaded_data, f, indent=2)
-                                f.close()
+                            return {"message": "Successful.", "action": True}
 
-                                return {"message": "Successful.", "action": True}
+                except KeyError:
+                    return {"message": "Invalid Key.", "action": False}
 
-                    except KeyError:
-                        return {"message": "Invalid Key.", "action": False}
-
-                if not flag:
-                    return {"message": "Failed.", "action": False}
-
-            else:
+            if not flag:
                 return {"message": "Failed.", "action": False}
 
         else:
             return {"message": "Failed.", "action": False}
+
+    else:
+        return {"message": "Failed.", "action": False}
 
 
 def delete_many(collection, data, file_path=DATABASE_PATH):
@@ -367,55 +343,49 @@ def delete_many(collection, data, file_path=DATABASE_PATH):
     where key and value is the key value used to identify the records to be deleted.
     """
 
-    try:
-        f = open(file_path, mode='r', encoding='utf-8')
-        loaded_data = json.load(f)
-        f.close()
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+    flag = False
 
-    else:
-        flag = False
+    if isinstance(data, list) and data != [] and collection in loaded_data:
 
-        if isinstance(data, list) and data != [] and collection in loaded_data:
+        for i in data:
+            if i['unique_key'] != '' and i['unique_value'] != '':
 
-            for i in data:
-                if i['unique_key'] != '' and i['unique_value'] != '':
+                for j in loaded_data[collection]:
+                    try:
+                        if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
+                            try:
+                                loaded_data[collection].remove(j)
 
-                    for j in loaded_data[collection]:
-                        try:
-                            if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
-                                try:
-                                    loaded_data[collection].remove(j)
+                            except ValueError as e:
+                                return {"message": str(e), "action": False}
 
-                                except ValueError as e:
-                                    return {"message": str(e), "action": False}
+                            else:
+                                file = open(file_path, mode='w', encoding='utf-8')
+                                json.dump(loaded_data, file, indent=2)
+                                file.close()
 
-                                else:
-                                    f = open(file_path, mode='w', encoding='utf-8')
-                                    json.dump(loaded_data, f, indent=2)
-                                    f.close()
+                                flag = True
 
-                                    flag = True
-
-                        except KeyError:
-                            return {"message": "Invalid Key.", "action": False}
-
-                else:
-                    return {"message": "Failed.", "action": False}
-
-            if flag:
-                return {"message": "Successful.", "action": True}
+                    except KeyError:
+                        return {"message": "Invalid Key.", "action": False}
 
             else:
                 return {"message": "Failed.", "action": False}
 
+        if flag:
+            return {"message": "Successful.", "action": True}
+
         else:
             return {"message": "Failed.", "action": False}
+
+    else:
+        return {"message": "Failed.", "action": False}
 
 
 def create_db(file_path):
@@ -443,17 +413,12 @@ def create_collection(collection, file_path=DATABASE_PATH):
     (:param) collection: The collection to be created
     """
 
-    try:
-        f = open(file_path, mode='r+', encoding='utf-8')
-        loaded_data = json.load(f)
+    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        loaded_data = f["loaded_data"]
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
-
-    else:
         try:
             if collection not in loaded_data and collection != '':
                 loaded_data[collection] = []
@@ -465,9 +430,9 @@ def create_collection(collection, file_path=DATABASE_PATH):
             return {"message": str(e), "action": False}
 
         else:
-            f.seek(0)
-            json.dump(loaded_data, f, indent=2)
-            f.close()
+            f['file'].seek(0)
+            json.dump(loaded_data, f['file'], indent=2)
+            f['file'].close()
 
             return {"message": "Successfully.", "action": True}
 
@@ -479,37 +444,29 @@ def drop_collection(collection, file_path=DATABASE_PATH):
     (:param) collection: The collection to be deleted
     """
 
+    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
+
+        loaded_data = f["loaded_data"]
+
     try:
-        f = open(file_path, mode='r+', encoding='utf-8')
-        loaded_data = json.load(f)
-        f.close()
+        if collection in loaded_data and collection != '':
+            loaded_data.pop(collection)
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        else:
+            return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
-    except json.decoder.JSONDecodeError as e:
+    except KeyError as e:
         return {"message": str(e), "action": False}
 
     else:
+        f = open(file_path, mode='w+', encoding='utf-8')
+        json.dump(loaded_data, f, indent=2)
 
-        try:
-            if collection in loaded_data and collection != '':
+        f.close()
 
-                loaded_data.pop(collection)
-
-            else:
-                return {"message": "Collection does not exist or Invalid collection name", "action": False}
-
-        except KeyError as e:
-            return {"message": str(e), "action": False}
-
-        else:
-            f = open(file_path, mode='w+', encoding='utf-8')
-            json.dump(loaded_data, f, indent=2)
-
-            f.close()
-
-    return {"message": "Successfully.", "action": True}
+        return {"message": "Successfully.", "action": True}
 
 
 def count(collection, query, file_path=DATABASE_PATH):

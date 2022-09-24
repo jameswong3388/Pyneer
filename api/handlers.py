@@ -1,3 +1,6 @@
+import json
+
+
 class file_handler:
     def __init__(self, file_path, mode, encoding='utf-8'):
         self.filename = file_path
@@ -12,15 +15,19 @@ class file_handler:
     def __enter__(self):
         try:
             self.file = open(self.filename, mode=self.mode, encoding=self.encoding)
-            return self.file
+            return {"message": self.error, "file": self.file, "loaded_data": json.load(self.file)}
 
         except FileNotFoundError as e:
             self.error = str(e)
-            return self.error
+            return {"message": self.error}
+
+        except json.decoder.JSONDecodeError as e:
+            self.error = str(e)
+            return {"message": self.error}
 
         except Exception as e:
             self.error = str(e)
-            return self.error
+            return {"message": self.error}
 
     """
     This will be called when (with statement) is finished.
