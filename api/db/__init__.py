@@ -5,6 +5,8 @@ import json
 import sys
 import os
 
+from api import handlers
+
 DATABASE_PATH = 'database/db.json'
 
 
@@ -20,36 +22,30 @@ def insert_one(collection, document, file_path=DATABASE_PATH):
     if the collection does not exist, it will be created
     """
 
-    try:
-        f = open(file_path, mode='r+', encoding='utf-8')
-        loaded_data = json.load(f)
+    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+        try:
+            loaded_data = json.load(f)
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        except json.decoder.JSONDecodeError as e:
+            return {"message": str(e), "action": False}
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+        else:
+            if isinstance(document, dict) and document != {}:
+                if collection in loaded_data:
+                    loaded_data[collection].append(document)
 
-    else:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-        if isinstance(document, dict) and document != {}:
-            if collection in loaded_data:
-                loaded_data[collection].append(document)
+                    return {"message": "Successful.", "action": True}
 
-                f.seek(0)
-                json.dump(loaded_data, f, indent=2)
-
-                f.close()
+                create_collection(collection=collection, file_path=file_path)
+                insert_one(collection=collection, document=document, file_path=file_path)
 
                 return {"message": "Successful.", "action": True}
 
-            create_collection(collection=collection, file_path=file_path)
-            insert_one(collection=collection, document=document, file_path=file_path)
-
-            return {"message": "Successful.", "action": True}
-
-        else:
-            return {"message": "Failed.", "action": False}
+            else:
+                return {"message": "Failed.", "action": False}
 
 
 def insert_many(collection, documents, file_path=DATABASE_PATH):
@@ -64,40 +60,35 @@ def insert_many(collection, documents, file_path=DATABASE_PATH):
     if the collection does not exist, it will be created
     """
 
-    try:
-        f = open(file_path, mode='r+', encoding='utf-8')
-        loaded_data = json.load(f)
+    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+        try:
+            loaded_data = json.load(f)
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
+        except json.decoder.JSONDecodeError as e:
+            return {"message": str(e), "action": False}
 
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
+        else:
+            if isinstance(documents, list) and documents != []:
+                if collection in loaded_data:
+                    for i in documents:
+                        if i != {}:
+                            loaded_data[collection].append(i)
 
-    else:
-        if isinstance(documents, list) and documents != []:
-            if collection in loaded_data:
-                for i in documents:
-                    if i != {}:
-                        loaded_data[collection].append(i)
+                        else:
+                            return {"message": "Failed.", "action": False}
 
-                    else:
-                        return {"message": "Failed.", "action": False}
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-                f.seek(0)
-                json.dump(loaded_data, f, indent=2)
+                    return {"message": "Successful.", "action": True}
 
-                f.close()
+                create_collection(collection=collection, file_path=file_path)
+                insert_many(collection=collection, documents=documents, file_path=file_path)
 
                 return {"message": "Successful.", "action": True}
 
-            create_collection(collection=collection, file_path=file_path)
-            insert_many(collection=collection, documents=documents, file_path=file_path)
-
-            return {"message": "Successful.", "action": True}
-
-        else:
-            return {"message": "Failed.", "action": False}
+            else:
+                return {"message": "Failed.", "action": False}
 
 
 def read(collection, query, file_path=DATABASE_PATH):
@@ -114,40 +105,35 @@ def read(collection, query, file_path=DATABASE_PATH):
 
     new_lists = []
 
-    try:
-        f = open(file_path, mode='r', encoding='utf-8')
-        loaded_data = json.loads(f.read())
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        try:
+            loaded_data = json.load(f)
 
-    except FileNotFoundError as e:
-        return {"message": str(e), "action": False}
-
-    except json.decoder.JSONDecodeError as e:
-        return {"message": str(e), "action": False}
-
-    else:
-        if isinstance(query, list) and collection in loaded_data:
-            if query:
-
-                for i in loaded_data[collection]:
-                    new_dict = {}
-
-                    for key in query:
-                        if key in i and key != '':
-                            new_dict[key] = i[key]
-
-                        else:
-                            return {"message": "Invalid Key.", "action": False}
-
-                    new_lists.append(new_dict)
-
-                f.close()
-
-                return {"message": "Successful.", "action": True, "result": new_lists}
-
-            return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
+        except json.decoder.JSONDecodeError as e:
+            return {"message": str(e), "action": False}
 
         else:
-            return {"message": "Failed.", "action": False}
+            if isinstance(query, list) and collection in loaded_data:
+                if query:
+
+                    for i in loaded_data[collection]:
+                        new_dict = {}
+
+                        for key in query:
+                            if key in i and key != '':
+                                new_dict[key] = i[key]
+
+                            else:
+                                return {"message": "Invalid Key.", "action": False}
+
+                        new_lists.append(new_dict)
+
+                    return {"message": "Successful.", "action": True, "result": new_lists}
+
+                return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
+
+            else:
+                return {"message": "Failed.", "action": False}
 
 
 def find(query, collection, file_path=DATABASE_PATH):
@@ -227,7 +213,6 @@ def update_one(collection, data, file_path=DATABASE_PATH):
                         return {"message": "Invalid Key.", "action": False}
 
                     else:
-
                         f = open(file_path, mode='w+', encoding='utf-8')
                         f.seek(0)
                         json.dump(loaded_data, f, indent=2)
