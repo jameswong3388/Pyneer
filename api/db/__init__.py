@@ -188,19 +188,12 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
     flag = False
 
-    if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and \
-            data['unique_value'] != '':
-        for i in loaded_data[collection]:
-            if data['key'] != '' and data['value'] and i[data['unique_key']] == data['unique_value'] \
-                    and data['key'] in i:
-
-                try:
+    try:
+        if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and data['unique_value'] != '':
+            for i in loaded_data[collection]:
+                if data['key'] != '' and data['value'] and i[data['unique_key']] == data['unique_value'] and data['key'] in i:
                     i[data['key']] = data['value']
 
-                except KeyError:
-                    return {"message": "Invalid Key.", "action": False}
-
-                else:
                     file = open(file_path, mode='w+', encoding='utf-8')
                     file.seek(0)
                     json.dump(loaded_data, file, indent=2)
@@ -209,11 +202,14 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
                     return {"message": "Successful.", "action": True}
 
-        if not flag:
+            if not flag:
+                return {"message": "Failed.", "action": False}
+
+        else:
             return {"message": "Failed.", "action": False}
 
-    else:
-        return {"message": "Failed.", "action": False}
+    except KeyError:
+        return {"message": "Invalid Key.", "action": False}
 
 
 def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -237,44 +233,39 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
     flag = False
 
-    if isinstance(data, list) and data != [] and collection in loaded_data:
-        for i in data:
-            if i['unique_key'] != '' and i['unique_value'] != '' and i['key'] != '' and i['value'] != '':
-                for j in loaded_data[collection]:
-                    try:
+    try:
+        if isinstance(data, list) and data != [] and collection in loaded_data:
+            for i in data:
+                if i['unique_key'] != '' and i['unique_value'] != '' and i['key'] != '' and i['value'] != '':
+                    for j in loaded_data[collection]:
                         if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
 
-                            try:
-                                j[i['key']] = i['value']
+                            j[i['key']] = i['value']
 
-                            except KeyError:
-                                return {"message": "Invalid Key.", "action": False}
+                            file = open(file_path, mode='w+', encoding='utf-8')
+                            file.seek(0)
+                            json.dump(loaded_data, loaded_data, indent=2)
+                            file.close()
 
-                            else:
-                                file = open(file_path, mode='w+', encoding='utf-8')
-                                file.seek(0)
-                                json.dump(loaded_data, loaded_data, indent=2)
-                                file.close()
-
-                                flag = True
+                            flag = True
 
                         else:
                             flag = False
 
-                    except KeyError:
-                        return {"message": "Invalid Key.", "action": False}
+                else:
+                    return {"message": "Invalid Key.", "action": False}
+
+            if flag:
+                return {"message": "Successful.", "action": True}
 
             else:
-                return {"message": "Invalid Key.", "action": False}
-
-        if flag:
-            return {"message": "Successful.", "action": True}
+                return {"message": "Failed.", "action": False}
 
         else:
             return {"message": "Failed.", "action": False}
 
-    else:
-        return {"message": "Failed.", "action": False}
+    except KeyError:
+        return {"message": "Invalid Key.", "action": False}
 
 
 def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -297,38 +288,32 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
     flag = False
 
-    if isinstance(data, dict) and collection in loaded_data:
+    try:
+        if isinstance(data, dict) and collection in loaded_data:
 
-        if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
+            if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
 
-            for i in loaded_data[collection]:
-                try:
+                for i in loaded_data[collection]:
                     if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
+                        loaded_data[collection].remove(i)
 
-                        try:
-                            loaded_data[collection].remove(i)
+                        file = open(file_path, mode='w', encoding='utf-8')
+                        json.dump(loaded_data, file, indent=2)
+                        file.close()
 
-                        except ValueError as e:
-                            return {"message": e, "action": False}
+                        return {"message": "Successful.", "action": True}
 
-                        else:
-                            file = open(file_path, mode='w', encoding='utf-8')
-                            json.dump(loaded_data, file, indent=2)
-                            file.close()
+                if not flag:
+                    return {"message": "Failed.", "action": False}
 
-                            return {"message": "Successful.", "action": True}
-
-                except KeyError:
-                    return {"message": "Invalid Key.", "action": False}
-
-            if not flag:
+            else:
                 return {"message": "Failed.", "action": False}
 
         else:
             return {"message": "Failed.", "action": False}
 
-    else:
-        return {"message": "Failed.", "action": False}
+    except KeyError:
+        return {"message": "Invalid Key.", "action": False}
 
 
 def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -351,41 +336,37 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
     flag = False
 
-    if isinstance(data, list) and data != [] and collection in loaded_data:
+    try:
+        if isinstance(data, list) and data != [] and collection in loaded_data:
 
-        for i in data:
-            if i['unique_key'] != '' and i['unique_value'] != '':
+            for i in data:
+                if i['unique_key'] != '' and i['unique_value'] != '':
 
-                for j in loaded_data[collection]:
-                    try:
+                    for j in loaded_data[collection]:
+
                         if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
-                            try:
-                                loaded_data[collection].remove(j)
+                            loaded_data[collection].remove(j)
 
-                            except ValueError as e:
-                                return {"message": str(e), "action": False}
+                            file = open(file_path, mode='w', encoding='utf-8')
+                            json.dump(loaded_data, file, indent=2)
+                            file.close()
 
-                            else:
-                                file = open(file_path, mode='w', encoding='utf-8')
-                                json.dump(loaded_data, file, indent=2)
-                                file.close()
+                            flag = True
 
-                                flag = True
+                else:
+                    return {"message": "Failed.", "action": False}
 
-                    except KeyError:
-                        return {"message": "Invalid Key.", "action": False}
+            if flag:
+                return {"message": "Successful.", "action": True}
 
             else:
                 return {"message": "Failed.", "action": False}
 
-        if flag:
-            return {"message": "Successful.", "action": True}
-
         else:
             return {"message": "Failed.", "action": False}
 
-    else:
-        return {"message": "Failed.", "action": False}
+    except KeyError:
+        return {"message": "Invalid Key.", "action": False}
 
 
 def create_db(file_path):
@@ -426,8 +407,8 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
             else:
                 return {"message": "Collection already exists or Invalid collection name", "action": False}
 
-        except KeyError as e:
-            return {"message": str(e), "action": False}
+        except KeyError:
+            return {"message": "Invalid Key.", "action": False}
 
         else:
             f['file'].seek(0)
@@ -457,8 +438,8 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         else:
             return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
-    except KeyError as e:
-        return {"message": str(e), "action": False}
+    except KeyError:
+        return {"message": "Invalid Key.", "action": False}
 
     else:
         f = open(file_path, mode='w+', encoding='utf-8')
