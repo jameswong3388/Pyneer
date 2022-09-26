@@ -380,11 +380,10 @@ def create_db(file_path):
         json.dump({}, f, indent=2)
         f.close()
 
+        return {"message": "Successfully.", "action": True}
+
     except FileExistsError as e:
         return {"message": str(e), "action": False}
-
-    else:
-        return {"message": "Successfully.", "action": True}
 
 
 def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
@@ -404,18 +403,17 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
             if collection not in loaded_data and collection != '':
                 loaded_data[collection] = []
 
+                f['file'].seek(0)
+                json.dump(loaded_data, f['file'], indent=2)
+                f['file'].close()
+
+                return {"message": "Successfully.", "action": True}
+
             else:
                 return {"message": "Collection already exists or Invalid collection name", "action": False}
 
         except KeyError:
             return {"message": "Invalid Key.", "action": False}
-
-        else:
-            f['file'].seek(0)
-            json.dump(loaded_data, f['file'], indent=2)
-            f['file'].close()
-
-            return {"message": "Successfully.", "action": True}
 
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
@@ -435,19 +433,18 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         if collection in loaded_data and collection != '':
             loaded_data.pop(collection)
 
+            f = open(file_path, mode='w+', encoding='utf-8')
+            json.dump(loaded_data, f, indent=2)
+
+            f.close()
+
+            return {"message": "Successfully.", "action": True}
+
         else:
             return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
-
-    else:
-        f = open(file_path, mode='w+', encoding='utf-8')
-        json.dump(loaded_data, f, indent=2)
-
-        f.close()
-
-        return {"message": "Successfully.", "action": True}
 
 
 def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
