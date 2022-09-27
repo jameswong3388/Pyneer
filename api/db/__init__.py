@@ -19,8 +19,7 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
     (:param) document: Data in the form of a dictionary
 
     e.g. document = {'username': 'admin', ...}
-
-    if the collection does not exist, it will be created
+    Note: if the collection does not exist, it will be created
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -55,9 +54,8 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     (:param) documents: Data in the form of a dictionary
 
     e.g. documents = [{'username': 'admin', ...}, {'username': 'admin', ...}]
-
-    if the collection does not exist, it will be created
-    if the document = {} then it will skip
+    Note: if the collection does not exist, it will be created
+    Note: if the document = {} then it will skip
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -98,8 +96,8 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
     (:param) query: An array of keys to be queried from the collection
 
     e.g. query = ['username', 'password', 'role']
-    if query = [] then all the documents in the collection will be returned
-    if key does not exist, it will be skipped
+    Note: if query = [] then all the documents in the collection will be returned
+    Note: if key does not exist, it will be skipped
    """
 
     new_lists = []
@@ -110,29 +108,25 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-        try:
-            if isinstance(query, list):
-                if query:
-                    for i in loaded_data[collection]:
-                        new_dict = {}
+        if isinstance(query, list):
+            if query:
+                for i in loaded_data[collection]:
+                    new_dict = {}
 
-                        for key in query:
-                            if key in i:
-                                new_dict[key] = i[key]
-                                new_lists.append(new_dict)
+                    for key in query:
+                        if key in i:
+                            new_dict[key] = i[key]
+                            new_lists.append(new_dict)
 
-                            else:
-                                continue
+                        else:
+                            continue
 
-                    return {"message": "Action successful.", "action": True, "result": new_lists}
+                return {"message": "Action successful.", "action": True, "result": new_lists}
 
-                return {"message": "Action successful.", "action": True, "result": loaded_data[collection]}
+            return {"message": "Action successful.", "action": True, "result": loaded_data[collection]}
 
-            else:
-                return {"message": "Action failed.", "action": False}
-
-        except KeyError:
-            return {"message": "Invalid Key or Value.", "action": False}
+        else:
+            return {"message": "Action failed.", "action": False}
 
 
 def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
@@ -144,8 +138,8 @@ def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
     (:param) collection: Collection's name
 
     e.g. query = {"key": "...", "value": "..."}
-    if nothing is found, it will return an empty list, []
-    if query = {} then all the documents in the collection will be returned
+    Note: if nothing is found, it will return an empty list, []
+    Note: if query = {} then all the documents in the collection will be returned
     """
 
     read_data = read(collection=collection, query=[], file_path=file_path)
@@ -399,6 +393,7 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         except KeyError:
             return {"message": "Invalid Key or Value.", "action": False}
 
+
 def drop_db(file_path=DEFAULT_DATABASE_PATH):
     """
     This function deletes a database file
@@ -412,6 +407,7 @@ def drop_db(file_path=DEFAULT_DATABASE_PATH):
 
     except FileNotFoundError as e:
         return {"message": str(e), "action": False}
+
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
     """
@@ -450,7 +446,7 @@ def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
     (:param) collection: The collection to be used to store the data
 
-    if query = {} then it counts all the documents in the collection
+    Note: if query = {} then it counts all the documents in the collection
     """
 
     read_data = find(query=query, collection=collection, file_path=file_path)
@@ -501,8 +497,6 @@ def total_size(collection, file_path=DEFAULT_DATABASE_PATH):
     This function will return the total size of the collection
 
     (:param) file: The file used to store the data
-
-    return the size in bytes
     """
 
     loaded_data = read(collection=collection, query=[], file_path=file_path)
