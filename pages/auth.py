@@ -75,7 +75,7 @@ def register_page():
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
-        new_id = db.generate_new_id(collection='users')
+        new_id = db.generate_id(collection='users')
 
         validated_inputs = {"id": new_id['result']}
 

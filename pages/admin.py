@@ -57,7 +57,7 @@ def update_document():
             collection = input('Key in the collection you want to update: ')
             input_id = input('Key in the "ID" of the user you want to update: ')
 
-            existence = helpers.existence_checker(key='id', value=input_id, collection=collection)
+            existence = helpers.existence_checker(key='id', value=int(input_id), collection=collection)
 
             if existence['exist']:
                 break
@@ -69,7 +69,7 @@ def update_document():
         key = input('Key in the field you want to update: ')
         value = input('Key in the new value: ')
 
-        data = {"unique_key": "id", "unique_value": input_id, "key": key, "value": value}
+        data = {"unique_key": "id", "unique_value": int(input_id), "key": key, "value": value}
         updated_user = db.update_one(collection='users', data=data)
 
         input(updated_user['message'])
@@ -100,7 +100,7 @@ def delete_document():
             collection = input('Key in the collection you want to delete from: ')
             input_id = input('Key in the "ID" of the user you want to delete: ')
 
-            existences = helpers.existence_checker(key='id', value=input_id, collection=collection)
+            existences = helpers.existence_checker(key='id', value=int(input_id), collection=collection)
 
             if existences['exist']:
                 break
@@ -109,7 +109,7 @@ def delete_document():
                 input('ID or collection does not exist, press enter to try again . . .')
                 continue
 
-        data = {"unique_key": "id", "unique_value": input_id}
+        data = {"unique_key": "id", "unique_value": int(input_id)}
         deleted_user = db.delete_one(collection=collection, data=data)
 
         input(deleted_user['message'])

@@ -4,6 +4,7 @@ Pyneer's `db.*` API
 import json
 import sys
 import os
+import uuid
 
 from api import handlers
 
@@ -443,7 +444,7 @@ def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
     return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_new_id(collection, file_path=DEFAULT_DATABASE_PATH):
+def generate_id(collection, file_path=DEFAULT_DATABASE_PATH):
     """
     This function will get the last id of the collection and add 1 to it.
 
@@ -456,6 +457,16 @@ def generate_new_id(collection, file_path=DEFAULT_DATABASE_PATH):
         return {'action': True, 'message': "", 'result': new_id}
 
     return {'action': False, 'message': 'No data found.'}
+
+
+def generate_uuid(salt):
+    """
+    This function will generate an uuid
+
+    (:param) salt: The salt to be used to generate the uuid, which can be a string or a number
+    """
+
+    return uuid.uuid5(uuid.NAMESPACE_DNS, str(salt))
 
 
 def db():
