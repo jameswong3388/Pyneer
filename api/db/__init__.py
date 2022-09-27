@@ -29,7 +29,7 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
         loaded_data = f["loaded_data"]
 
         if not isinstance(document, dict) or document == {}:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
         if collection in loaded_data:
             loaded_data[collection].append(document)
@@ -37,13 +37,13 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
             f['file'].seek(0)
             json.dump(loaded_data, f['file'], indent=2)
 
-            return {"message": "Successful.", "action": True}
+            return {"message": "Action successful.", "action": True}
 
         else:
             create_collection(collection=collection, file_path=file_path)
             insert_one(collection=collection, document=document, file_path=file_path)
 
-            return {"message": "Successful.", "action": True}
+            return {"message": "Action successful.", "action": True}
 
 
 def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
@@ -56,6 +56,7 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     e.g. documents = [{'username': 'admin', ...}, {'username': 'admin', ...}]
 
     if the collection does not exist, it will be created
+    if the document = {} then it will skip
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -71,20 +72,20 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
                         loaded_data[collection].append(i)
 
                     else:
-                        return {"message": "Failed.", "action": False}
+                        continue
 
                 f['file'].seek(0)
                 json.dump(loaded_data, f['file'], indent=2)
 
-                return {"message": "Successful.", "action": True}
+                return {"message": "Action successful.", "action": True}
 
             create_collection(collection=collection, file_path=file_path)
             insert_many(collection=collection, documents=documents, file_path=file_path)
 
-            return {"message": "Successful.", "action": True}
+            return {"message": "Action successful.", "action": True}
 
         else:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
 
 def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
@@ -107,26 +108,26 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-        if isinstance(query, list) and collection in loaded_data:
-            if query:
-                for i in loaded_data[collection]:
-                    new_dict = {}
+        try:
+            if isinstance(query, list):
+                if query:
+                    for i in loaded_data[collection]:
+                        new_dict = {}
 
-                    for key in query:
-                        if key in i and key != '':
+                        for key in query:
                             new_dict[key] = i[key]
 
-                        else:
-                            return {"message": "Invalid Key.", "action": False}
+                        new_lists.append(new_dict)
 
-                    new_lists.append(new_dict)
+                    return {"message": "Action successful.", "action": True, "result": new_lists}
 
-                return {"message": "Successful.", "action": True, "result": new_lists}
+                return {"message": "Action successful.", "action": True, "result": loaded_data[collection]}
 
-            return {"message": "Successful.", "action": True, "result": loaded_data[collection]}
+            else:
+                return {"message": "Action failed.", "action": False}
 
-        else:
-            return {"message": "Failed.", "action": False}
+        except KeyError:
+            return {"message": "Invalid Key.", "action": False}
 
 
 def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
@@ -157,10 +158,10 @@ def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
             except KeyError:
                 return {'action': False, 'message': 'Invalid Key.'}
 
-        return {'action': True, 'message': "Successful.", 'result': new_result}
+        return {'action': True, 'message': "Action successful.", 'result': new_result}
 
     elif read_data['action'] and read_data['result'] and query == {}:
-        return {'action': True, 'message': "Successful.", 'result': read_data['result']}
+        return {'action': True, 'message': "Action successful.", 'result': read_data['result']}
 
     else:
         return {'action': False, 'message': 'No data found'}
@@ -188,10 +189,9 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, dict) and data != {} and collection in loaded_data:
-
+        if isinstance(data, dict) and data != {}:
             for i in loaded_data[collection]:
-                if i[data['unique_key']] == data['unique_value'] and data['key'] in i:
+                if i[data['unique_key']] == data['unique_value']:
                     i[data['key']] = data['value']
 
                     file = open(file_path, mode='w+', encoding='utf-8')
@@ -199,13 +199,13 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
                     json.dump(loaded_data, file, indent=2)
                     file.close()
 
-                    return {"message": "Successful.", "action": True}
+                    return {"message": "Action successful.", "action": True}
 
             if not flag:
-                return {"message": "Failed.", "action": False}
+                return {"message": "Action failed.", "action": False}
 
         else:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
@@ -233,10 +233,10 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, list) and data != [] and collection in loaded_data:
+        if isinstance(data, list) and data != []:
             for i in data:
                 for j in loaded_data[collection]:
-                    if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
+                    if j[i['unique_key']] == i['unique_value']:
                         j[i['key']] = i['value']
 
                         with open(file_path, mode='w+', encoding='utf-8') as file:
@@ -249,14 +249,13 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
                         flag = False
 
             if flag:
-
-                return {"message": "Successful.", "action": True}
+                return {"message": "Action successful.", "action": True}
 
             else:
-                return {"message": "Failed.", "action": False}
+                return {"message": "Action failed.", "action": False}
 
         else:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
@@ -283,23 +282,22 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, dict) and collection in loaded_data and data != {}:
-
+        if isinstance(data, dict) and data != {}:
             for i in loaded_data[collection]:
-                if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
+                if i[data['unique_key']] == data['unique_value']:
                     loaded_data[collection].remove(i)
 
                     file = open(file_path, mode='w', encoding='utf-8')
                     json.dump(loaded_data, file, indent=2)
                     file.close()
 
-                    return {"message": "Successful.", "action": True}
+                    return {"message": "Action successful.", "action": True}
 
             if not flag:
-                return {"message": "Failed.", "action": False}
+                return {"message": "Action failed.", "action": False}
 
         else:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
@@ -326,10 +324,10 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, list) and data != [] and collection in loaded_data:
+        if isinstance(data, list) and data != []:
             for i in data:
                 for j in loaded_data[collection]:
-                    if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
+                    if j[i['unique_key']] == i['unique_value']:
                         loaded_data[collection].remove(j)
 
                         with open(file_path, mode='w', encoding='utf-8') as file:
@@ -338,13 +336,13 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
                         flag = True
 
             if flag:
-                return {"message": "Successful.", "action": True}
+                return {"message": "Action successful.", "action": True}
 
             else:
-                return {"message": "Failed.", "action": False}
+                return {"message": "Action failed.", "action": False}
 
         else:
-            return {"message": "Failed.", "action": False}
+            return {"message": "Action failed.", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
@@ -411,7 +409,7 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         loaded_data = f["loaded_data"]
 
     try:
-        if collection in loaded_data and collection != '':
+        if collection in loaded_data:
             loaded_data.pop(collection)
 
             f = open(file_path, mode='w+', encoding='utf-8')
