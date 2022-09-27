@@ -99,6 +99,7 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
     e.g. query = ['username', 'password', 'role']
     if query = [] then all the documents in the collection will be returned
+    if key does not exist, it will be skipped
    """
 
     new_lists = []
@@ -398,6 +399,19 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         except KeyError:
             return {"message": "Invalid Key or Value.", "action": False}
 
+def drop_db(file_path=DEFAULT_DATABASE_PATH):
+    """
+    This function deletes a database file
+    (:param) file: The file used to store the data
+    """
+
+    try:
+        os.remove(file_path)
+
+        return {"message": "Successfully.", "action": True}
+
+    except FileNotFoundError as e:
+        return {"message": str(e), "action": False}
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
     """
