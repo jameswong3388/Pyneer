@@ -116,9 +116,12 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
                         new_dict = {}
 
                         for key in query:
-                            new_dict[key] = i[key]
+                            if key in i:
+                                new_dict[key] = i[key]
+                                new_lists.append(new_dict)
 
-                        new_lists.append(new_dict)
+                            else:
+                                continue
 
                     return {"message": "Action successful.", "action": True, "result": new_lists}
 
@@ -128,7 +131,7 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
                 return {"message": "Action failed.", "action": False}
 
         except KeyError:
-            return {"message": "Invalid Key.", "action": False}
+            return {"message": "Invalid Key or Value.", "action": False}
 
 
 def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
@@ -157,7 +160,7 @@ def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
                     new_result.append(new_dict)
 
             except KeyError:
-                return {'action': False, 'message': 'Invalid Key.'}
+                return {'action': False, 'message': 'Invalid Key or Value.'}
 
         return {'action': True, 'message': "Action successful.", 'result': new_result}
 
@@ -209,7 +212,7 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
     except KeyError:
-        return {"message": "Invalid Key.", "action": False}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -259,7 +262,7 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
     except KeyError:
-        return {"message": "Invalid Key.", "action": False}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -301,7 +304,7 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
     except KeyError:
-        return {"message": "Invalid Key.", "action": False}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
@@ -346,7 +349,7 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
     except KeyError:
-        return {"message": "Invalid Key.", "action": False}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def create_db(file_path):
@@ -393,7 +396,7 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
                 return {"message": "Collection already exists or Invalid collection name", "action": False}
 
         except KeyError:
-            return {"message": "Invalid Key.", "action": False}
+            return {"message": "Invalid Key or Value.", "action": False}
 
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
@@ -424,7 +427,7 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
     except KeyError:
-        return {"message": "Invalid Key.", "action": False}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
