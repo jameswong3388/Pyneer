@@ -109,7 +109,6 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
         if isinstance(query, list) and collection in loaded_data:
             if query:
-
                 for i in loaded_data[collection]:
                     new_dict = {}
 
@@ -189,15 +188,15 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, dict) and data != {} and collection in loaded_data and data['unique_key'] != '' and data['unique_value'] != '':
+        if isinstance(data, dict) and data != {} and collection in loaded_data:
+
             for i in loaded_data[collection]:
-                if data['key'] != '' and data['value'] and i[data['unique_key']] == data['unique_value'] and data['key'] in i:
+                if i[data['unique_key']] == data['unique_value'] and data['key'] in i:
                     i[data['key']] = data['value']
 
                     file = open(file_path, mode='w+', encoding='utf-8')
                     file.seek(0)
                     json.dump(loaded_data, file, indent=2)
-
                     file.close()
 
                     return {"message": "Successful.", "action": True}
@@ -236,26 +235,21 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     try:
         if isinstance(data, list) and data != [] and collection in loaded_data:
             for i in data:
-                if i['unique_key'] != '' and i['unique_value'] != '' and i['key'] != '' and i['value'] != '':
-                    for j in loaded_data[collection]:
-                        if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
+                for j in loaded_data[collection]:
+                    if j[i['unique_key']] == i['unique_value'] and i['key'] in j:
+                        j[i['key']] = i['value']
 
-                            j[i['key']] = i['value']
-
-                            file = open(file_path, mode='w+', encoding='utf-8')
+                        with open(file_path, mode='w+', encoding='utf-8') as file:
                             file.seek(0)
-                            json.dump(loaded_data, loaded_data, indent=2)
-                            file.close()
+                            json.dump(loaded_data, file, indent=2)
 
-                            flag = True
+                        flag = True
 
-                        else:
-                            flag = False
-
-                else:
-                    return {"message": "Invalid Key.", "action": False}
+                    else:
+                        flag = False
 
             if flag:
+
                 return {"message": "Successful.", "action": True}
 
             else:
@@ -289,24 +283,19 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, dict) and collection in loaded_data:
+        if isinstance(data, dict) and collection in loaded_data and data != {}:
 
-            if data != {} and data['unique_key'] != '' and data['unique_value'] != '':
+            for i in loaded_data[collection]:
+                if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
+                    loaded_data[collection].remove(i)
 
-                for i in loaded_data[collection]:
-                    if i[data['unique_key']] == data['unique_value'] and data['unique_key'] in i:
-                        loaded_data[collection].remove(i)
+                    file = open(file_path, mode='w', encoding='utf-8')
+                    json.dump(loaded_data, file, indent=2)
+                    file.close()
 
-                        file = open(file_path, mode='w', encoding='utf-8')
-                        json.dump(loaded_data, file, indent=2)
-                        file.close()
+                    return {"message": "Successful.", "action": True}
 
-                        return {"message": "Successful.", "action": True}
-
-                if not flag:
-                    return {"message": "Failed.", "action": False}
-
-            else:
+            if not flag:
                 return {"message": "Failed.", "action": False}
 
         else:
@@ -338,23 +327,15 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(data, list) and data != [] and collection in loaded_data:
-
             for i in data:
-                if i['unique_key'] != '' and i['unique_value'] != '':
+                for j in loaded_data[collection]:
+                    if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
+                        loaded_data[collection].remove(j)
 
-                    for j in loaded_data[collection]:
-
-                        if j[i['unique_key']] == i['unique_value'] and i['unique_key'] in j:
-                            loaded_data[collection].remove(j)
-
-                            file = open(file_path, mode='w', encoding='utf-8')
+                        with open(file_path, mode='w', encoding='utf-8') as file:
                             json.dump(loaded_data, file, indent=2)
-                            file.close()
 
-                            flag = True
-
-                else:
-                    return {"message": "Failed.", "action": False}
+                        flag = True
 
             if flag:
                 return {"message": "Successful.", "action": True}
@@ -380,11 +361,10 @@ def create_db(file_path):
         json.dump({}, f, indent=2)
         f.close()
 
+        return {"message": "Successfully.", "action": True}
+
     except FileExistsError as e:
         return {"message": str(e), "action": False}
-
-    else:
-        return {"message": "Successfully.", "action": True}
 
 
 def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
@@ -404,18 +384,17 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
             if collection not in loaded_data and collection != '':
                 loaded_data[collection] = []
 
+                f['file'].seek(0)
+                json.dump(loaded_data, f['file'], indent=2)
+                f['file'].close()
+
+                return {"message": "Successfully.", "action": True}
+
             else:
                 return {"message": "Collection already exists or Invalid collection name", "action": False}
 
         except KeyError:
             return {"message": "Invalid Key.", "action": False}
-
-        else:
-            f['file'].seek(0)
-            json.dump(loaded_data, f['file'], indent=2)
-            f['file'].close()
-
-            return {"message": "Successfully.", "action": True}
 
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
@@ -435,19 +414,18 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         if collection in loaded_data and collection != '':
             loaded_data.pop(collection)
 
+            f = open(file_path, mode='w+', encoding='utf-8')
+            json.dump(loaded_data, f, indent=2)
+
+            f.close()
+
+            return {"message": "Successfully.", "action": True}
+
         else:
             return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
     except KeyError:
         return {"message": "Invalid Key.", "action": False}
-
-    else:
-        f = open(file_path, mode='w+', encoding='utf-8')
-        json.dump(loaded_data, f, indent=2)
-
-        f.close()
-
-        return {"message": "Successfully.", "action": True}
 
 
 def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
