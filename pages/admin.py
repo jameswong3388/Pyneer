@@ -69,8 +69,8 @@ def update_document():
         key = input('Key in the field you want to update: ')
         value = input('Key in the new value: ')
 
-        data = {"unique_key": "id", "unique_value": int(input_id), "key": key, "value": value}
-        updated_user = db.update_one(collection='users', data=data)
+        select = {"key": "id", "value": int(input_id)}
+        updated_user = db.update_one(collection='users', select=select, update={"key": key, "value": value})
 
         input(updated_user['message'])
         update_document()
@@ -110,7 +110,7 @@ def delete_document():
                 continue
 
         data = {"unique_key": "id", "unique_value": int(input_id)}
-        deleted_user = db.delete_one(collection=collection, data=data)
+        deleted_user = db.delete_one(collection=collection, select=data)
 
         input(deleted_user['message'])
         delete_document()
