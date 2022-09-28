@@ -166,17 +166,17 @@ def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
         return {'action': False, 'message': 'No data found'}
 
 
-def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
+def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     """
     This function update a single record in the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) data: Data in the form of a dictionary
+    (:param) select: select: The filter to be used to identify the record to be updated
+    (:param) update: The data to be used to update the record
 
-    e.g. data = {'unique_key': 'username', 'unique_value': 'admin', 'key': 'role', 'value': 'admin'}
-    where unique_key and unique_value  is the key value used to identify the record to be updated,
-    and key and value is the key value to be updated.
+    e.g. select = {"key": "...", "value": "..."}
+    e.g. update = {"key": "...", "value": "..."}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -185,13 +185,11 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    flag = False
-
     try:
-        if isinstance(data, dict) and data != {}:
+        if isinstance(select, dict) and select != {} and isinstance(update, dict) and update != {}:
             for i in loaded_data[collection]:
-                if i[data['unique_key']] == data['unique_value']:
-                    i[data['key']] = data['value']
+                if i[select['key']] == select['value']:
+                    i[update['key']] = update['value']
 
                     file = open(file_path, mode='w+', encoding='utf-8')
                     file.seek(0)
@@ -200,7 +198,6 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
                     return {"message": "Action successful.", "action": True}
 
-            if not flag:
                 return {"message": "Action failed.", "action": False}
 
         else:
@@ -210,15 +207,15 @@ def update_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
+def update_many(collection, updates, file_path=DEFAULT_DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) data: Data in the form of a list of dictionaries
+    (:param) updates: The data to be used to update the record
 
-    e.g. data = [{'unique_key': 'username', 'unique_value': 'admin', 'key': 'role', 'value': 'admin'}, ...]
+    e.g. updates = [{'unique_key': '...', 'unique_value': '...', 'key': '...', 'value': '...'}, ...]
     where unique_key and unique_value  is the key value used to identify the record to be updated,
     and key and value is the key value to be updated.
     """
@@ -232,8 +229,8 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, list) and data != []:
-            for i in data:
+        if isinstance(updates, list) and updates != []:
+            for i in updates:
                 for j in loaded_data[collection]:
                     if j[i['unique_key']] == i['unique_value']:
                         j[i['key']] = i['value']
@@ -243,9 +240,6 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
                             json.dump(loaded_data, file, indent=2)
 
                         flag = True
-
-                    else:
-                        flag = False
 
             if flag:
                 return {"message": "Action successful.", "action": True}
@@ -260,16 +254,17 @@ def update_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
+def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH):
     """
-    This function deletes a record from the collection
+    This function replace a single record in the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) data: Data in the form of a dictionary
+    (:param) select: The filter to be used to identify the record to be replaced
+    (:param) replacement: The replacement to be used to replace the record
 
-    e.g. data = {'unique_key': 'username', 'unique_value': 'admin'}
-    where unique_key and unique_value  is the key value used to identify the record to be deleted.
+    e.g. select = {"key": "...", "value": "..."}
+    e.g. replacement = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -278,21 +273,19 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    flag = False
-
     try:
-        if isinstance(data, dict) and data != {}:
+        if isinstance(select, dict) and select != {} and isinstance(replacement, dict) and replacement != {}:
             for i in loaded_data[collection]:
-                if i[data['unique_key']] == data['unique_value']:
+                if i[select['key']] == select['value']:
                     loaded_data[collection].remove(i)
+                    loaded_data[collection].append(replacement)
 
-                    file = open(file_path, mode='w', encoding='utf-8')
-                    json.dump(loaded_data, file, indent=2)
-                    file.close()
+                    with open(file_path, mode='w+', encoding='utf-8') as file:
+                        file.seek(0)
+                        json.dump(loaded_data, file, indent=2)
 
                     return {"message": "Action successful.", "action": True}
 
-            if not flag:
                 return {"message": "Action failed.", "action": False}
 
         else:
@@ -302,15 +295,54 @@ def delete_one(collection, data, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
+def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
+    """
+    This function deletes a record from the collection
+
+    (:param) file: The file used to store the data
+    (:param) collection: The collection to be used to store the data
+    (:param) select: The filter to be used to identify the record to be deleted
+
+    e.g. select = {"key": "...", "value": "..."}
+    where unique_key and unique_value  is the key value used to identify the record to be deleted.
+    """
+
+    with handlers.file_handler(mode='r', file_path=file_path) as f:
+        if f['message']:
+            return {"message": f['message'], "action": False}
+
+        loaded_data = f["loaded_data"]
+
+    try:
+        if isinstance(select, dict) and select != {}:
+            for i in loaded_data[collection]:
+                if i[select['key']] == select['value']:
+                    loaded_data[collection].remove(i)
+
+                    file = open(file_path, mode='w', encoding='utf-8')
+                    json.dump(loaded_data, file, indent=2)
+                    file.close()
+
+                    return {"message": "Action successful.", "action": True}
+
+                return {"message": "Action failed.", "action": False}
+
+        else:
+            return {"message": "Action failed.", "action": False}
+
+    except KeyError:
+        return {"message": "Invalid Key or Value.", "action": False}
+
+
+def delete_many(collection, selects, file_path=DEFAULT_DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) data: Data in the form of a dictionary
+    (:param) selects: The filters to be used to identify the records to be deleted
 
-    e.g. data = [{'unique_key': 'username', 'unique_value': 'admin'}, ...]
+    e.g. selects = [{'key': '...', 'value': '...'}, ...]
     where key and value is the key value used to identify the records to be deleted.
     """
 
@@ -323,10 +355,10 @@ def delete_many(collection, data, file_path=DEFAULT_DATABASE_PATH):
     flag = False
 
     try:
-        if isinstance(data, list) and data != []:
-            for i in data:
+        if isinstance(selects, list) and selects != []:
+            for i in selects:
                 for j in loaded_data[collection]:
-                    if j[i['unique_key']] == i['unique_value']:
+                    if j[i['key']] == i['value']:
                         loaded_data[collection].remove(j)
 
                         with open(file_path, mode='w', encoding='utf-8') as file:
