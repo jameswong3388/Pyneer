@@ -166,6 +166,22 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
         return {'action': False, 'message': 'No data found'}
 
 
+def select(query, data):
+    """
+    This function will filter the data based on the filter
+
+    (:param) query: The filter to be used to filter the data
+    (:param) data: The data to be filtered
+
+    e.g. query = {'name': 'John', 'age': 20, ...}
+    e.g. data = [{'name': 'John', 'age': 20}, {'name': 'John', 'age': 21}]
+    """
+    result = list(filter(lambda x: all(item in x.items() for item in query.items()), data))
+    matched_count = len(result)
+
+    return {'acknowledge': True if matched_count > 0 else False, 'matched_count': matched_count, 'result': result}
+
+
 def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     """
     This function update a single record in the collection
