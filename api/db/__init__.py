@@ -19,7 +19,7 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
     (:param) document: Data in the form of a dictionary
 
     e.g. document = {'username': 'admin', ...}
-    Note: if the collection does not exist, it will be created
+    Note: If the collection does not exist, it will be created.
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -54,8 +54,8 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     (:param) documents: Data in the form of a dictionary
 
     e.g. documents = [{'username': 'admin', ...}, {'username': 'admin', ...}]
-    Note: if the collection does not exist, it will be created
-    Note: if the document = {} then it will skip
+    Note: If the collection does not exist, it will be created.
+    Note: If the document = {} then it will skip.
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -96,8 +96,8 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
     (:param) query: An array of keys to be queried from the collection
 
     e.g. query = ['username', 'password', 'role']
-    Note: if query = [] then all the documents in the collection will be returned
-    Note: if key does not exist, it will be skipped
+    Note: If query = [] then all the documents in the collection will be returned.
+    Note: If key does not exist, it will be skipped.
    """
 
     new_lists = []
@@ -129,7 +129,7 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
 
-def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
+def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
     """
     This function will query from 'file' and return a result
     with all the data that matches the key and value.
@@ -138,8 +138,8 @@ def find(query, collection, file_path=DEFAULT_DATABASE_PATH):
     (:param) collection: Collection's name
 
     e.g. query = {"key": "...", "value": "..."}
-    Note: if nothing is found, it will return an empty list, []
-    Note: if query = {} then all the documents in the collection will be returned
+    Note: If nothing is found, it will return an empty list, [].
+    Note: If query = {} then all the documents in the collection will be returned.
     """
 
     read_data = read(collection=collection, query=[], file_path=file_path)
@@ -177,6 +177,9 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
     e.g. select = {"key": "...", "value": "..."}
     e.g. update = {"key": "...", "value": "..."}
+
+    Note: If the Key in the select does not exist, it will be created and the value will be updated.
+    Note: This method will only update the first record that matches the select.
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -207,17 +210,17 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def update_many(collection, updates, file_path=DEFAULT_DATABASE_PATH):
+def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) updates: The data to be used to update the record
+    (:param) select: select: The filter to be used to identify the records to be updated
+    (:param) update: The data to be used to update the records
 
-    e.g. updates = [{'unique_key': '...', 'unique_value': '...', 'key': '...', 'value': '...'}, ...]
-    where unique_key and unique_value  is the key value used to identify the record to be updated,
-    and key and value is the key value to be updated.
+    e.g. select = {"key": "...", "value": "..."}
+    e.g. update = {"key": "...", "value": "..."}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -226,32 +229,33 @@ def update_many(collection, updates, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    flag = False
+    modified_count = 0
+    matched_count = 0
 
     try:
-        if isinstance(updates, list) and updates != []:
-            for i in updates:
-                for j in loaded_data[collection]:
-                    if j[i['unique_key']] == i['unique_value']:
-                        j[i['key']] = i['value']
+        if isinstance(select, dict) and select != {} and isinstance(update, dict) and update != {}:
+            for i in loaded_data[collection]:
+                if i[select['key']] == select['value']:
+                    matched_count += 1
 
-                        with open(file_path, mode='w+', encoding='utf-8') as file:
-                            file.seek(0)
-                            json.dump(loaded_data, file, indent=2)
+                    i[update['key']] = update['value']
 
-                        flag = True
+                    with open(file_path, mode='w+', encoding='utf-8') as file:
+                        file.seek(0)
+                        json.dump(loaded_data, file, indent=2)
 
-            if flag:
-                return {"message": "Action successful.", "action": True}
+                    modified_count += 1
+
+                continue
+
+            if modified_count:
+                return {"acknowledge": True, "matched_count": matched_count, "modified_count": modified_count}
 
             else:
-                return {"message": "Action failed.", "action": False}
-
-        else:
-            return {"message": "Action failed.", "action": False}
+                return {"acknowledge": False, "matched_count": matched_count, "modified_count": modified_count}
 
     except KeyError:
-        return {"message": "Invalid Key or Value.", "action": False}
+        return {"acknowledge": False, "matched_count": matched_count, "modified_count": modified_count}
 
 
 def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH):
@@ -478,7 +482,7 @@ def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
     (:param) collection: The collection to be used to store the data
 
-    Note: if query = {} then it counts all the documents in the collection
+    Note: If query = {} then it counts all the documents in the collection.
     """
 
     read_data = find(query=query, collection=collection, file_path=file_path)
