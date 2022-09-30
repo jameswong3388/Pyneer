@@ -193,7 +193,6 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
         loaded_data = f["loaded_data"]
 
     try:
-        modified_count = 0
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
             a = sort(field=select, data=loaded_data[collection])
 
@@ -202,18 +201,17 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
                     for key, value in update.items():
                         i[key] = value
 
-                    modified_count += 1
                     break
 
                 with open(file_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"message": "Action successful.", "action": True, "modified_count": modified_count,
+                return {"message": "Action successful.", "action": True, "modified_count": 1,
                         "matched_count": a['matched_count']}
 
             else:
-                return {"message": "Action failed.", "action": False, "modified_count": modified_count,
+                return {"message": "Action failed.", "action": False, "modified_count": 0,
                         "matched_count": a['matched_count']}
 
         else:
@@ -283,6 +281,7 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
 
     e.g. select = {"key": "...", "value": "..."}
     e.g. replacement = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
+    Note: This method will only update the first record that matches the select.
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -293,18 +292,23 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
 
     try:
         if isinstance(select, dict) and select != {} and isinstance(replacement, dict) and replacement != {}:
-            for i in loaded_data[collection]:
-                if i[select['key']] == select['value']:
-                    loaded_data[collection].remove(i)
-                    loaded_data[collection].append(replacement)
+            a = sort(field=select, data=loaded_data[collection])
 
-                    with open(file_path, mode='w+', encoding='utf-8') as file:
-                        file.seek(0)
-                        json.dump(loaded_data, file, indent=2)
+            if a['acknowledge']:
+                for i in a['result']:
+                    i.clear()
+                    i.update(replacement)
+                    break
 
-                    return {"message": "Action successful.", "action": True}
+                with open(file_path, 'w+') as f:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-                return {"message": "Action failed.", "action": False}
+                return {"message": "Action successful.", "action": True, "modified_count": 1,
+                        "matched_count": a['matched_count']}
+            else:
+                return {"message": "Action failed.", "action": False, "modified_count": 0,
+                        "matched_count": a['matched_count']}
 
         else:
             return {"message": "Action failed.", "action": False}
