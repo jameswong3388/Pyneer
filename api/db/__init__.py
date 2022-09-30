@@ -145,7 +145,7 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
     read_data = read(collection=collection, query=[], file_path=file_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
-        a = query(feild=query, data=read_data['result'])
+        a = sort(field=query, data=read_data['result'])
 
         return {"message": "Action successful.", "action": True, "result": a['result']}
 
@@ -153,9 +153,9 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
         return {'action': False, 'message': 'Action failed.'}
 
 
-def query(field, data):
+def sort(field, data):
     """
-    This function will filter the data based on the filter
+    This function will filter the data based on the field
 
     (:param) query: The filter to be used to filter the data
     (:param) data: The data to be filtered
@@ -193,24 +193,28 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
         loaded_data = f["loaded_data"]
 
     try:
+        modified_count = 0
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = query(field=select, data=loaded_data[collection])
+            a = sort(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
                     for key, value in update.items():
                         i[key] = value
 
+                    modified_count += 1
                     break
 
                 with open(file_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"message": "Action successful.", "action": True}
+                return {"message": "Action successful.", "action": True, "modified_count": modified_count,
+                        "matched_count": a['matched_count']}
 
             else:
-                return {"message": "Action failed.", "action": False}
+                return {"message": "Action failed.", "action": False, "modified_count": modified_count,
+                        "matched_count": a['matched_count']}
 
         else:
             return {"message": "Action failed.", "action": False}
