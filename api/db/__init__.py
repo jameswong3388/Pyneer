@@ -325,8 +325,7 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
     (:param) collection: The collection to be used to store the data
     (:param) select: The filter to be used to identify the record to be deleted
 
-    e.g. select = {"key": "...", "value": "..."}
-    where unique_key and unique_value  is the key value used to identify the record to be deleted.
+    e.g. select = {"key": "value", ...}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -337,17 +336,22 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {}:
-            for i in loaded_data[collection]:
-                if i[select['key']] == select['value']:
+            a = sort(field=select, data=loaded_data[collection])
+
+            if a['acknowledge']:
+                for i in a['result']:
                     loaded_data[collection].remove(i)
+                    break
 
-                    file = open(file_path, mode='w', encoding='utf-8')
-                    json.dump(loaded_data, file, indent=2)
-                    file.close()
+                with open(file_path, 'w+') as f:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-                    return {"message": "Action successful.", "action": True}
-
-                return {"message": "Action failed.", "action": False}
+                return {"message": "Action successful.", "action": True, "deleted_count": 1,
+                        "matched_count": a['matched_count']}
+            else:
+                return {"message": "Action failed.", "action": False, "deleted_count": 0,
+                        "matched_count": a['matched_count']}
 
         else:
             return {"message": "Action failed.", "action": False}
@@ -356,15 +360,15 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def delete_many(collection, selects, file_path=DEFAULT_DATABASE_PATH):
+def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
     (:param) file: The file used to store the data
     (:param) collection: The collection to be used to store the data
-    (:param) selects: The filters to be used to identify the records to be deleted
+    (:param) select: The filters to be used to identify the records to be deleted
 
-    e.g. selects = [{'key': '...', 'value': '...'}, ...]
+    e.g. select = {"key": "value", ...}
     where key and value is the key value used to identify the records to be deleted.
     """
 
@@ -374,25 +378,23 @@ def delete_many(collection, selects, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    flag = False
-
     try:
-        if isinstance(selects, list) and selects != []:
-            for i in selects:
-                for j in loaded_data[collection]:
-                    if j[i['key']] == i['value']:
-                        loaded_data[collection].remove(j)
+        if isinstance(select, dict) and select != {}:
+            a = sort(field=select, data=loaded_data[collection])
 
-                        with open(file_path, mode='w', encoding='utf-8') as file:
-                            json.dump(loaded_data, file, indent=2)
+            if a['acknowledge']:
+                for i in a['result']:
+                    loaded_data[collection].remove(i)
 
-                        flag = True
+                with open(file_path, 'w+') as f:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-            if flag:
-                return {"message": "Action successful.", "action": True}
-
+                return {"message": "Action successful.", "action": True, "deleted_count": a['matched_count'],
+                        "matched_count": a['matched_count']}
             else:
-                return {"message": "Action failed.", "action": False}
+                return {"message": "Action failed.", "action": False, "deleted_count": 0,
+                        "matched_count": a['matched_count']}
 
         else:
             return {"message": "Action failed.", "action": False}
