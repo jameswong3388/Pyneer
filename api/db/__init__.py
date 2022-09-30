@@ -230,8 +230,8 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     (:param) select: select: The filter to be used to identify the records to be updated
     (:param) update: The data to be used to update the records
 
-    e.g. select = {"key": "...", "value": "..."}
-    e.g. update = {"key": "...", "value": "..."}
+    e.g. select = {"key": "value", ...}
+    e.g. update = {"key": "value", ...}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -279,7 +279,7 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
     (:param) select: The filter to be used to identify the record to be replaced
     (:param) replacement: The replacement to be used to replace the record
 
-    e.g. select = {"key": "...", "value": "..."}
+    e.g. select = {"key": "value", ...}
     e.g. replacement = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
     Note: This method will only update the first record that matches the select.
     """
