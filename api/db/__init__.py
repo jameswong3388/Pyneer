@@ -242,33 +242,34 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    modified_count = 0
-    matched_count = 0
-
     try:
-        if isinstance(select, dict) and select != {} and isinstance(update, dict) and update != {}:
-            for i in loaded_data[collection]:
-                if i[select['key']] == select['value']:
-                    matched_count += 1
+        modified_count = 0
+        if isinstance(select, dict) and isinstance(update, dict) and update != {}:
+            a = sort(field=select, data=loaded_data[collection])
 
-                    i[update['key']] = update['value']
-
-                    with open(file_path, mode='w+', encoding='utf-8') as file:
-                        file.seek(0)
-                        json.dump(loaded_data, file, indent=2)
+            if a['acknowledge']:
+                for i in a['result']:
+                    for key, value in update.items():
+                        i[key] = value
 
                     modified_count += 1
 
-                continue
+                with open(file_path, 'w+') as f:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-            if modified_count:
-                return {"acknowledge": True, "matched_count": matched_count, "modified_count": modified_count}
+                return {"message": "Action successful.", "action": True, "modified_count": modified_count,
+                        "matched_count": a['matched_count']}
 
             else:
-                return {"acknowledge": False, "matched_count": matched_count, "modified_count": modified_count}
+                return {"message": "Action failed.", "action": False, "modified_count": modified_count,
+                        "matched_count": a['matched_count']}
+
+        else:
+            return {"message": "Action failed.", "action": False}
 
     except KeyError:
-        return {"acknowledge": False, "matched_count": matched_count, "modified_count": modified_count}
+        return {"message": "Invalid Key or Value.", "action": False}
 
 
 def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH):
