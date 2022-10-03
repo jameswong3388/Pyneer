@@ -70,7 +70,7 @@ db.insert_one(collection="users", document={
 
 ## Running the project
 
-To run the project, simply run `index.py` with `python` or `python3` depending on your system.
+To run the project, simply run `main.py` with `python` or `python3` depending on your system.
 
 ```bash
 python main.py
