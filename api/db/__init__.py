@@ -410,9 +410,8 @@ def create_db(file_path):
     """
 
     try:
-        f = open(file_path, mode='x', encoding='utf-8')
-        json.dump({}, f, indent=2)
-        f.close()
+        with open(file_path, mode='x', encoding='utf-8') as f:
+            json.dump({}, f, indent=2)
 
         return {"message": "Successfully.", "action": True}
 
@@ -482,10 +481,8 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         if collection in loaded_data:
             loaded_data.pop(collection)
 
-            f = open(file_path, mode='w+', encoding='utf-8')
-            json.dump(loaded_data, f, indent=2)
-
-            f.close()
+            with open(file_path, mode='w+', encoding='utf-8') as f:
+                json.dump(loaded_data, f, indent=2)
 
             return {"message": "Successfully.", "action": True}
 
