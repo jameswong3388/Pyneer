@@ -12,13 +12,14 @@ DEFAULT_DATABASE_PATH = 'database/db.json'
 
 
 def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function create single record in the collection
-    (:param) file: File used to store the data
-    (:param) collection: Collection to be used to store the data
-    (:param) document: Data in the form of a dictionary
+    """ This function create single record in the collection
+
+    :param collection: Collection to be used to store the data
+    :param document: Data in the form of a dictionary
+    :param file_path: File used to store the data
 
     e.g. document = {'username': 'admin', ...}
+
     Note: If the collection does not exist, it will be created.
     """
 
@@ -47,13 +48,14 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
 
 
 def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function create single record in the collection
-    (:param) file: File used to store the data
-    (:param) collection: Collection to be used to store the data
-    (:param) documents: Data in the form of a dictionary
+    """This function create single record in the collection
+
+    :param collection: Collection to be used to store the data
+    :param documents: Data in the form of a dictionary
+    :param file_path: File used to store the data
 
     e.g. documents = [{'username': 'admin', ...}, {'username': 'admin', ...}]
+
     Note: If the collection does not exist, it will be created.
     Note: If the document = {} then it will skip.
     """
@@ -88,14 +90,14 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
 
 
 def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function reads a record from the collection
+    """This function reads a record from the collection
 
-    (:param) file: File used to store the data
-    (:param) collection: Collection to be used to store the data
-    (:param) query: An array of keys to be queried from the collection
+    :param collection: Collection to be used to store the data
+    :param query: An array of keys to be queried from the collection
+    :param file_path: File used to read the data
 
     e.g. query = ['username', 'password', 'role']
+
     Note: If query = [] then all the documents in the collection will be returned.
     Note: If key does not exist, it will be skipped.
    """
@@ -130,12 +132,12 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
 
 def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function will query from 'file' and return a result
+    """This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
-    (:param) query: The query to be used to search the database
-    (:param) collection: Collection's name
+    :param collection: Collection's name
+    :param query: The query to be used to search the database
+    :param file_path: The file used to find the data
 
     e.g. query = {"key": "value", ...}
     Note: If nothing is found, it will return an empty list, [].
@@ -154,11 +156,10 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
 
 def sort(field, data):
-    """
-    This function will filter the data based on the field
+    """This function will filter the data based on the field
 
-    (:param) query: The filter to be used to filter the data
-    (:param) data: The data to be filtered
+    :param field: The field to be used to filter the data
+    :param data: The data to be filtered
 
     e.g. field = {'name': 'John', 'age': 20, ...}
     e.g. data = [{'name': 'John', 'age': 20}, {'name': 'John', 'age': 21}]
@@ -171,13 +172,12 @@ def sort(field, data):
 
 
 def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function update a single record in the collection
+    """This function update a single record in the collection
 
-    (:param) file: The file used to store the data
-    (:param) collection: The collection to be used to store the data
-    (:param) select: select: The filter to be used to identify the record to be updated
-    (:param) update: The data to be used to update the record
+    :param collection: The collection to be used to store the data
+    :param select: select: The filter to be used to identify the record to be updated
+    :param update: The data to be used to update the record
+    :param file_path: The file used to update the data
 
     e.g. select = {"key": "value", ...}
     e.g. update = {"key": "value", ...}
@@ -225,10 +225,10 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
-    (:param) file: The file used to store the data
-    (:param) collection: The collection to be used to store the data
-    (:param) select: select: The filter to be used to identify the records to be updated
-    (:param) update: The data to be used to update the records
+    :param collection: The collection to be used to store the data
+    :param select: select: The filter to be used to identify the records to be updated
+    :param update: The data to be used to update the records
+    :param file_path: The file used to update the data
 
     e.g. select = {"key": "value", ...}
     e.g. update = {"key": "value", ...}
@@ -271,13 +271,12 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
 
 def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function replace a single record in the collection
+    """This function replace a single record in the collection
 
-    (:param) file: The file used to store the data
-    (:param) collection: The collection to be used to store the data
-    (:param) select: The filter to be used to identify the record to be replaced
-    (:param) replacement: The replacement to be used to replace the record
+    :param collection: The collection to be used to store the data
+    :param select: The filter to be used to identify the record to be replaced
+    :param replacement: The replacement to be used to replace the record
+    :param file_path: The file used to store the data
 
     e.g. select = {"key": "value", ...}
     e.g. replacement = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
@@ -318,12 +317,11 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
 
 
 def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function deletes a record from the collection
+    """This function deletes a record from the collection
 
-    (:param) file: The file used to store the data
-    (:param) collection: The collection to be used to store the data
-    (:param) select: The filter to be used to identify the record to be deleted
+    :param collection: The collection to be used to store the data
+    :param select: The filter to be used to identify the record to be deleted
+    :param file_path: The file used to store the data
 
     e.g. select = {"key": "value", ...}
     """
@@ -364,9 +362,9 @@ def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
-    (:param) file: The file used to store the data
-    (:param) collection: The collection to be used to store the data
-    (:param) select: The filters to be used to identify the records to be deleted
+    :param collection: The collection to be used to store the data
+    :param select: The filters to be used to identify the records to be deleted
+    :param file_path: The file used to store the data
 
     e.g. select = {"key": "value", ...}
     where key and value is the key value used to identify the records to be deleted.
@@ -404,9 +402,9 @@ def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
 
 
 def create_db(file_path):
-    """
-    This function creates a database file
-    (:param) file: The file used to store the data
+    """This function creates a database file
+
+    :param file_path: The file used to store the data
     """
 
     try:
@@ -420,10 +418,10 @@ def create_db(file_path):
 
 
 def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function creates a collection
+    """This function creates a collection
 
-    (:param) collection: The collection to be created
+    :param collection: The collection to be created
+    :param file_path: The file used to store the data
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -450,9 +448,9 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
 
 
 def drop_db(file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function deletes a database file
-    (:param) file: The file used to store the data
+    """This function deletes a database file
+
+    :param file_path: The file used to store the data
     """
 
     try:
@@ -465,10 +463,10 @@ def drop_db(file_path=DEFAULT_DATABASE_PATH):
 
 
 def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function deletes a collection
+    """This function deletes a collection
 
-    (:param) collection: The collection to be deleted
+    :param collection: The collection to be deleted
+    :param file_path: The file used to store the data
     """
 
     with handlers.file_handler(mode='r+', file_path=file_path) as f:
@@ -494,10 +492,11 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
 
 
 def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function counts the number of records in a collection
+    """This function counts the number of records in a collection
 
-    (:param) collection: The collection to be used to store the data
+    :param collection: The collection to be used to store the data
+    :param query: The filter to be used to identify the records to be counted
+    :param file_path: The file used to store the data
 
     Note: If query = {} then it counts all the documents in the collection.
     """
@@ -511,10 +510,10 @@ def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
 
 def generate_id(collection, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function will get the last id of the collection and add 1 to it.
+    """This function will get the last id of the collection and add 1 to it.
 
-    (:param) collection: The collection name
+    :param collection: The collection name
+    :param file_path: The file used to store the data
     """
     read_data = read(collection=collection, query=['id'], file_path=file_path)
 
@@ -526,18 +525,16 @@ def generate_id(collection, file_path=DEFAULT_DATABASE_PATH):
 
 
 def generate_uuid(salt):
-    """
-    This function will generate an uuid
+    """This function will generate an uuid
 
-    (:param) salt: The salt to be used to generate the uuid, which can be a string or a number
+    :param salt: The salt to be used to generate the uuid, which can be a string or a number
     """
 
     return uuid.uuid5(uuid.NAMESPACE_DNS, str(salt))
 
 
 def db():
-    """
-    This function will return all the databases in 'database' folder
+    """This function will return all the databases in 'database' folder
     """
 
     files = os.listdir('database')
@@ -546,10 +543,10 @@ def db():
 
 
 def total_size(collection, file_path=DEFAULT_DATABASE_PATH):
-    """
-    This function will return the total size of the collection
+    """This function will return the total size of the collection
 
-    (:param) file: The file used to store the data
+    :param collection: The collection name
+    :param file_path: The file used to store the data
     """
 
     loaded_data = read(collection=collection, query=[], file_path=file_path)
