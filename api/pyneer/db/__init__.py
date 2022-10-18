@@ -6,7 +6,7 @@ import sys
 import os
 import uuid
 
-from api import handlers
+from api.pyneer.db import handlers
 
 DEFAULT_DATABASE_PATH = 'database/db.json'
 

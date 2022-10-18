@@ -2,7 +2,7 @@ import time
 import re
 import datetime
 
-from api import db
+from api.pyneer import db
 
 
 def null_input_checker(inputs):

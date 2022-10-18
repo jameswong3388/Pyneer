@@ -28,9 +28,10 @@ git clone https://github.com/jameswong3388/Pyneer.git
 │   └── helpers.py
 ├── api
 │   ├── __init__.py
-│   ├── db
-│   │    └── __init__.py
-│   └── handlers
+│   └── pyneer
+│        └── db
+│            ├── __init__.py
+│            └── handlers
 ├── database
 │   ├── db.json
 │   └── db.txt
@@ -53,13 +54,13 @@ git clone https://github.com/jameswong3388/Pyneer.git
 ## API overview
 
 `db.*` - With Pyneer's database API, you can easily execute CRUD operations on your database. Pyneer uses `db.json` as
-the database file, but you can easily change it when calling the APIs.
+the database file by default, but you can easily change it when calling the APIs.
 
 ### Usage
 
 ```python
 # An example using `db.*` API
-from api import db
+from api.pyneer import db
 
 # Create a new user
 db.insert_one(collection="users", document={

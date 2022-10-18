@@ -1,4 +1,4 @@
-from api import db
+from api.pyneer import db
 from app import helpers
 from pages import user, admin
 

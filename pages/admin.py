@@ -1,5 +1,5 @@
 from pages import auth
-from api import db
+from api.pyneer import db
 from app import helpers
 
 invalid_input_message = "Invalid input, press enter to try again . . ."
