@@ -123,9 +123,9 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
                         else:
                             continue
 
-                return {"message": "Action successful.", "action": True, "result": new_lists}
+                return {"message": "Action successful.", "action": True,"matched_count": len(new_lists), "result": new_lists}
 
-            return {"message": "Action successful.", "action": True, "result": loaded_data[collection]}
+            return {"message": "Action successful.", "action": True,"matched_count": len(loaded_data[collection]), "result": loaded_data[collection]}
 
         else:
             return {"message": "Action failed.", "action": False}
@@ -147,9 +147,9 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
     read_data = read(collection=collection, query=[], file_path=file_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
-        a = filtr(field=query, data=read_data['result'])
+        r = filtr(field=query, data=read_data['result'])
 
-        return {"message": "Action successful.", "action": True, "result": a['result']}
+        return {"message": "Action successful.", "action": True,'matched_count': r['matched_count'], "result": r['result']}
 
     else:
         return {'action': False, 'message': 'Action failed.'}
