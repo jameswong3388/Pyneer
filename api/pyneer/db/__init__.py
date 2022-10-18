@@ -11,19 +11,19 @@ from api.pyneer.db import handlers
 DEFAULT_DATABASE_PATH = 'database/db.json'
 
 
-def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
+def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
     """ This function create single record in the collection
 
     :param collection: Collection to be used to store the data
     :param document: Data in the form of a dictionary
-    :param file_path: File used to store the data
+    :param db_path: File used to store the data
 
     e.g. document = {'key': 'value', ...}
 
     Note: If the collection does not exist, it will be created.
     """
 
-    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+    with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -41,18 +41,18 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action successful.", "action": True}
 
         else:
-            create_collection(collection=collection, file_path=file_path)
-            insert_one(collection=collection, document=document, file_path=file_path)
+            create_collection(collection=collection, db_path=db_path)
+            insert_one(collection=collection, document=document, db_path=db_path)
 
             return {"message": "Action successful.", "action": True}
 
 
-def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
+def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
     """This function create single record in the collection
 
     :param collection: Collection to be used to store the data
     :param documents: Data in the form of a dictionary
-    :param file_path: File used to store the data
+    :param db_path: File used to store the data
 
     e.g. documents = [{'key': 'value', ...}, {'key': 'value', ...}]
 
@@ -60,7 +60,7 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     Note: If the document = {} then it will skip.
     """
 
-    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+    with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -80,8 +80,8 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
 
                 return {"message": "Action successful.", "action": True}
 
-            create_collection(collection=collection, file_path=file_path)
-            insert_many(collection=collection, documents=documents, file_path=file_path)
+            create_collection(collection=collection, db_path=db_path)
+            insert_many(collection=collection, documents=documents, db_path=db_path)
 
             return {"message": "Action successful.", "action": True}
 
@@ -89,12 +89,12 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Action failed.", "action": False}
 
 
-def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
+def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
     """This function reads a record from the collection
 
     :param collection: Collection to be used to store the data
     :param query: An array of keys to be queried from the collection
-    :param file_path: File used to read the data
+    :param db_path: File used to read the data
 
     e.g. query = ['username', 'password', 'role']
 
@@ -104,7 +104,7 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
 
     new_lists = []
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -123,33 +123,36 @@ def read(collection, query, file_path=DEFAULT_DATABASE_PATH):
                         else:
                             continue
 
-                return {"message": "Action successful.", "action": True,"matched_count": len(new_lists), "result": new_lists}
+                return {"message": "Action successful.", "action": True, "matched_count": len(new_lists),
+                        "result": new_lists}
 
-            return {"message": "Action successful.", "action": True,"matched_count": len(loaded_data[collection]), "result": loaded_data[collection]}
+            return {"message": "Action successful.", "action": True, "matched_count": len(loaded_data[collection]),
+                    "result": loaded_data[collection]}
 
         else:
             return {"message": "Action failed.", "action": False}
 
 
-def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
+def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
     """This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
     :param collection: Collection's name
     :param query: The query to be used to search the database
-    :param file_path: The file used to find the data
+    :param db_path: The file used to find the data
 
     e.g. query = {'key': 'value', ...}
     Note: If nothing is found, it will return an empty list, [].
     Note: If query = {} then all the documents in the collection will be returned.
     """
 
-    read_data = read(collection=collection, query=[], file_path=file_path)
+    read_data = read(collection=collection, query=[], db_path=db_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
         r = filtr(field=query, data=read_data['result'])
 
-        return {"message": "Action successful.", "action": True,'matched_count': r['matched_count'], "result": r['result']}
+        return {"message": "Action successful.", "action": True, 'matched_count': r['matched_count'],
+                "result": r['result']}
 
     else:
         return {'action': False, 'message': 'Action failed.'}
@@ -171,13 +174,13 @@ def filtr(data, field):
     return {'acknowledge': True if matched_count > 0 else False, 'matched_count': matched_count, 'result': result}
 
 
-def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
+def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     """This function update a single record in the collection
 
     :param collection: The collection to be used to store the data
     :param select: select: The filter to be used to identify the record to be updated
     :param update: The data to be used to update the record
-    :param file_path: The file used to update the data
+    :param db_path: The file used to update the data
 
     e.g. select = {'key': 'value', ...}
     e.g. update = {'key': 'value', ...}
@@ -186,7 +189,7 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     Note: This method will only update the first record that matches the select.
     """
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -203,7 +206,7 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
                     break
 
-                with open(file_path, 'w+') as f:
+                with open(db_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
@@ -221,20 +224,20 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
+def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     """
     This function updates multiple records in the collection
 
     :param collection: The collection to be used to store the data
     :param select: select: The filter to be used to identify the records to be updated
     :param update: The data to be used to update the records
-    :param file_path: The file used to update the data
+    :param db_path: The file used to update the data
 
     e.g. select = {'key': 'value', ...}
     e.g. update = {'key': 'value', ...}
     """
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -252,7 +255,7 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
                     modified_count += 1
 
-                with open(file_path, 'w+') as f:
+                with open(db_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
@@ -270,20 +273,20 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH):
+def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
     """This function replace a single record in the collection
 
     :param collection: The collection to be used to store the data
     :param select: The filter to be used to identify the record to be replaced
     :param replacement: The replacement to be used to replace the record
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
 
     e.g. select = {'key': 'value', ...}
     e.g. replacement = {'key': 'value', ...}
     Note: This method will only update the first record that matches the select.
     """
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -299,7 +302,7 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
                     i.update(replacement)
                     break
 
-                with open(file_path, 'w+') as f:
+                with open(db_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
@@ -316,17 +319,17 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
+def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
     """This function deletes a record from the collection
 
     :param collection: The collection to be used to store the data
     :param select: The filter to be used to identify the record to be deleted
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
 
     e.g. select = {'key': 'value', ...}
     """
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -341,7 +344,7 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
                     loaded_data[collection].remove(i)
                     break
 
-                with open(file_path, 'w+') as f:
+                with open(db_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
@@ -358,19 +361,19 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
+def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
     """
     This function delete multiple records from the collection
 
     :param collection: The collection to be used to store the data
     :param select: The filters to be used to identify the records to be deleted
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
 
     e.g. select = {'key': 'value', ...}
     where key and value is the key value used to identify the records to be deleted.
     """
 
-    with handlers.file_handler(mode='r', file_path=file_path) as f:
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -384,7 +387,7 @@ def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
                 for i in a['result']:
                     loaded_data[collection].remove(i)
 
-                with open(file_path, 'w+') as f:
+                with open(db_path, 'w+') as f:
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
@@ -405,6 +408,8 @@ def create_db(file_path):
     """This function creates a database file
 
     :param file_path: The file used to store the data
+
+    e.g. file_path = 'path/to/file.json'
     """
 
     try:
@@ -417,14 +422,14 @@ def create_db(file_path):
         return {"message": str(e), "action": False}
 
 
-def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
+def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
     """This function creates a collection
 
     :param collection: The collection to be created
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
     """
 
-    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+    with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -447,14 +452,14 @@ def create_collection(collection, file_path=DEFAULT_DATABASE_PATH):
             return {"message": "Invalid Key or Value.", "action": False}
 
 
-def drop_db(file_path=DEFAULT_DATABASE_PATH):
+def drop_db(db_path=DEFAULT_DATABASE_PATH):
     """This function deletes a database file
 
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
     """
 
     try:
-        os.remove(file_path)
+        os.remove(db_path)
 
         return {"message": "Successfully.", "action": True}
 
@@ -462,14 +467,14 @@ def drop_db(file_path=DEFAULT_DATABASE_PATH):
         return {"message": str(e), "action": False}
 
 
-def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
+def drop_collection(collection, db_path=DEFAULT_DATABASE_PATH):
     """This function deletes a collection
 
     :param collection: The collection to be deleted
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
     """
 
-    with handlers.file_handler(mode='r+', file_path=file_path) as f:
+    with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if f['message']:
             return {"message": f['message'], "action": False}
 
@@ -479,7 +484,7 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         if collection in loaded_data:
             loaded_data.pop(collection)
 
-            with open(file_path, mode='w+', encoding='utf-8') as f:
+            with open(db_path, mode='w+', encoding='utf-8') as f:
                 json.dump(loaded_data, f, indent=2)
 
             return {"message": "Successfully.", "action": True}
@@ -491,17 +496,17 @@ def drop_collection(collection, file_path=DEFAULT_DATABASE_PATH):
         return {"message": "Invalid Key or Value.", "action": False}
 
 
-def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
+def count(collection, query, db_path=DEFAULT_DATABASE_PATH):
     """This function counts the number of records in a collection
 
     :param collection: The collection to be used to store the data
     :param query: The filter to be used to identify the records to be counted
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
 
     Note: If query = {} then it counts all the documents in the collection.
     """
 
-    read_data = find(query=query, collection=collection, file_path=file_path)
+    read_data = find(collection=collection, query=query, db_path=db_path)
 
     if read_data['action']:
         return {"message": "Successfully.", "action": True, "count": len(read_data['result'])}
@@ -509,13 +514,13 @@ def count(collection, query, file_path=DEFAULT_DATABASE_PATH):
     return {"message": "Collection does not exist or Invalid collection name", "action": False}
 
 
-def generate_id(collection, file_path=DEFAULT_DATABASE_PATH):
+def generate_id(collection, db_path=DEFAULT_DATABASE_PATH):
     """This function will get the last id of the collection and add 1 to it.
 
     :param collection: The collection name
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
     """
-    read_data = read(collection=collection, query=['id'], file_path=file_path)
+    read_data = read(collection=collection, query=['id'], db_path=db_path)
 
     if read_data['action'] and read_data['result']:
         new_id = int(read_data['result'][-1]["id"]) + 1
@@ -530,7 +535,7 @@ def generate_uuid(salt):
     :param salt: The salt to be used to generate the uuid, which can be a string or a number
     """
 
-    return uuid.uuid5(uuid.NAMESPACE_DNS, str(salt))
+    return uuid.uuid5(uuid.NAMESPACE_URL, str(salt))
 
 
 def db():
@@ -542,14 +547,14 @@ def db():
     return files
 
 
-def total_size(collection, file_path=DEFAULT_DATABASE_PATH):
+def total_size(collection, db_path=DEFAULT_DATABASE_PATH):
     """This function will return the total size of the collection
 
     :param collection: The collection name
-    :param file_path: The file used to store the data
+    :param db_path: The file used to store the data
     """
 
-    loaded_data = read(collection=collection, query=[], file_path=file_path)
+    loaded_data = read(collection=collection, query=[], db_path=db_path)
 
     if loaded_data['action']:
         return {'action': True, 'message': '', 'result': str(sys.getsizeof(loaded_data['result'])) + ' bytes'}
