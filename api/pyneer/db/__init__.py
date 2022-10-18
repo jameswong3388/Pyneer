@@ -18,7 +18,7 @@ def insert_one(collection, document, file_path=DEFAULT_DATABASE_PATH):
     :param document: Data in the form of a dictionary
     :param file_path: File used to store the data
 
-    e.g. document = {'username': 'admin', ...}
+    e.g. document = {'key': 'value', ...}
 
     Note: If the collection does not exist, it will be created.
     """
@@ -54,7 +54,7 @@ def insert_many(collection, documents, file_path=DEFAULT_DATABASE_PATH):
     :param documents: Data in the form of a dictionary
     :param file_path: File used to store the data
 
-    e.g. documents = [{'username': 'admin', ...}, {'username': 'admin', ...}]
+    e.g. documents = [{'key': 'value', ...}, {'key': 'value', ...}]
 
     Note: If the collection does not exist, it will be created.
     Note: If the document = {} then it will skip.
@@ -139,7 +139,7 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
     :param query: The query to be used to search the database
     :param file_path: The file used to find the data
 
-    e.g. query = {"key": "value", ...}
+    e.g. query = {'key': 'value', ...}
     Note: If nothing is found, it will return an empty list, [].
     Note: If query = {} then all the documents in the collection will be returned.
     """
@@ -147,7 +147,7 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
     read_data = read(collection=collection, query=[], file_path=file_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
-        a = sort(field=query, data=read_data['result'])
+        a = filtr(field=query, data=read_data['result'])
 
         return {"message": "Action successful.", "action": True, "result": a['result']}
 
@@ -155,14 +155,14 @@ def find(collection, query, file_path=DEFAULT_DATABASE_PATH):
         return {'action': False, 'message': 'Action failed.'}
 
 
-def sort(field, data):
+def filtr(data, field):
     """This function will filter the data based on the field
 
-    :param field: The field to be used to filter the data
     :param data: The data to be filtered
+    :param field: The field to be used to filter the data
 
-    e.g. field = {'name': 'John', 'age': 20, ...}
-    e.g. data = [{'name': 'John', 'age': 20}, {'name': 'John', 'age': 21}]
+    e.g. field = {'key': 'value', ...}
+    e.g. data = [{'key': 'value', ...}, {'key': 'value', ...}]
     """
 
     result = list(filter(lambda x: all(item in x.items() for item in field.items()), data))
@@ -179,8 +179,8 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     :param update: The data to be used to update the record
     :param file_path: The file used to update the data
 
-    e.g. select = {"key": "value", ...}
-    e.g. update = {"key": "value", ...}
+    e.g. select = {'key': 'value', ...}
+    e.g. update = {'key': 'value', ...}
 
     Note: If the Key in the select does not exist, it will be created and the value will be updated.
     Note: This method will only update the first record that matches the select.
@@ -194,7 +194,7 @@ def update_one(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = sort(field=select, data=loaded_data[collection])
+            a = filtr(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -230,8 +230,8 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     :param update: The data to be used to update the records
     :param file_path: The file used to update the data
 
-    e.g. select = {"key": "value", ...}
-    e.g. update = {"key": "value", ...}
+    e.g. select = {'key': 'value', ...}
+    e.g. update = {'key': 'value', ...}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -243,7 +243,7 @@ def update_many(collection, select, update, file_path=DEFAULT_DATABASE_PATH):
     try:
         modified_count = 0
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = sort(field=select, data=loaded_data[collection])
+            a = filtr(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -278,8 +278,8 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
     :param replacement: The replacement to be used to replace the record
     :param file_path: The file used to store the data
 
-    e.g. select = {"key": "value", ...}
-    e.g. replacement = {'username': 'admin', 'password': 'admin', 'role': 'admin'}
+    e.g. select = {'key': 'value', ...}
+    e.g. replacement = {'key': 'value', ...}
     Note: This method will only update the first record that matches the select.
     """
 
@@ -291,7 +291,7 @@ def replace_one(collection, select, replacement, file_path=DEFAULT_DATABASE_PATH
 
     try:
         if isinstance(select, dict) and select != {} and isinstance(replacement, dict) and replacement != {}:
-            a = sort(field=select, data=loaded_data[collection])
+            a = filtr(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -323,7 +323,7 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
     :param select: The filter to be used to identify the record to be deleted
     :param file_path: The file used to store the data
 
-    e.g. select = {"key": "value", ...}
+    e.g. select = {'key': 'value', ...}
     """
 
     with handlers.file_handler(mode='r', file_path=file_path) as f:
@@ -334,7 +334,7 @@ def delete_one(collection, select, file_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {}:
-            a = sort(field=select, data=loaded_data[collection])
+            a = filtr(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -366,7 +366,7 @@ def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
     :param select: The filters to be used to identify the records to be deleted
     :param file_path: The file used to store the data
 
-    e.g. select = {"key": "value", ...}
+    e.g. select = {'key': 'value', ...}
     where key and value is the key value used to identify the records to be deleted.
     """
 
@@ -378,7 +378,7 @@ def delete_many(collection, select, file_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {}:
-            a = sort(field=select, data=loaded_data[collection])
+            a = filtr(field=select, data=loaded_data[collection])
 
             if a['acknowledge']:
                 for i in a['result']:
