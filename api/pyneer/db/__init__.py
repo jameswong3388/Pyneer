@@ -38,6 +38,8 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
                 document['_id'] = _id
                 loaded_data[collection].append(document)
 
+            # check if '_id' already exist in the collection
+
             f['file'].seek(0)
             json.dump(loaded_data, f['file'], indent=2)
 
@@ -309,6 +311,11 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
 
             if a['acknowledge']:
                 for i in a['result']:
+                    # check if 'id' is in the replacement
+                    if '_id' not in replacement:
+                        _id = generate__id(collection=collection, db_path=db_path)['_id']
+                        replacement['_id'] = _id
+
                     i.clear()
                     i.update(replacement)
                     break
@@ -317,11 +324,9 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": 1,
-                        "matched_count": a['matched_count']}
+                return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
             else:
-                return {"action": False, "modified_count": 0,
-                        "matched_count": a['matched_count']}
+                return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
 
         else:
             return {"action": False}
@@ -359,11 +364,9 @@ def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "deleted_count": 1,
-                        "matched_count": a['matched_count']}
+                return {"action": True, "deleted_count": 1, "matched_count": a['matched_count']}
             else:
-                return {"action": False, "deleted_count": 0,
-                        "matched_count": a['matched_count']}
+                return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
 
         else:
             return {"action": False}
@@ -402,11 +405,9 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "deleted_count": a['matched_count'],
-                        "matched_count": a['matched_count']}
+                return {"action": True, "deleted_count": a['matched_count'], "matched_count": a['matched_count']}
             else:
-                return {"action": False, "deleted_count": 0,
-                        "matched_count": a['matched_count']}
+                return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
 
         else:
             return {"action": False}
