@@ -72,8 +72,12 @@ def update_document():
         select = {"key": "id", "value": int(input_id)}
         updated_user = db.update_one(collection='users', select=select, update={"key": key, "value": value})
 
-        input(updated_user['message'])
-        update_document()
+        if updated_user['action']:
+            input('User updated successfully, press enter to continue . . .')
+            admin_menu()
+        else:
+            input('User update failed, press enter to continue . . .')
+            update_document()
 
     elif option == "2":
         admin_menu()
@@ -112,8 +116,13 @@ def delete_document():
         data = {"unique_key": "id", "unique_value": int(input_id)}
         deleted_user = db.delete_one(collection=collection, select=data)
 
-        input(deleted_user['message'])
-        delete_document()
+        if deleted_user['action']:
+            input('User deleted successfully, press enter to continue . . .')
+            admin_menu()
+
+        else:
+            input('User delete failed, press enter to continue . . .')
+            delete_document()
 
     elif option == "2":
         auth.auth_page()
@@ -166,8 +175,13 @@ def create_new_collection():
         collection = input('Key in the name of the collection you want to create: ')
         created_table = db.create_collection(collection=collection)
 
-        input(created_table['message'])
-        admin_menu()
+        if created_table['action']:
+            input('Collection created successfully, press enter to continue . . .')
+            admin_menu()
+
+        else:
+            input('Collection creation failed, press enter to continue . . .')
+            create_new_collection()
 
     elif option == "2":
         admin_menu()
