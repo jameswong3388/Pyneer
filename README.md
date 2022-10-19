@@ -63,10 +63,12 @@ the database file by default, but you can easily change it when calling the APIs
 from api.pyneer import db
 
 # Create a new user
-db.insert_one(collection="users", document={
+x = db.insert_one(collection="users", document={
     "username": "jameswong3388",
     "password": "password"
-})
+}, db_path="database/db.json")
+
+# Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
 ```
 
 ## Running the project
