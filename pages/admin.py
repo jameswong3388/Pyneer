@@ -55,22 +55,22 @@ def update_document():
         while True:
 
             collection = input('Key in the collection you want to update: ')
-            input_id = input('Key in the "ID" of the user you want to update: ')
+            input_id = input('Key in the "_id" of the user you want to update: ')
 
-            existence = helpers.existence_checker(key='id', value=int(input_id), collection=collection)
+            existence = helpers.existence_checker(key='_id', value=input_id, collection=collection)
 
             if existence['exist']:
                 break
 
             else:
-                input('ID or collection does not exist, press enter to try again . . .')
+                input('_id or collection does not exist, press enter to try again . . .')
                 continue
 
         key = input('Key in the field you want to update: ')
         value = input('Key in the new value: ')
 
-        select = {"key": "id", "value": int(input_id)}
-        updated_user = db.update_one(collection='users', select=select, update={"key": key, "value": value})
+        select = {'_id': str(input_id)}
+        updated_user = db.update_one(collection='users', select=select, update={key: value})
 
         if updated_user['action']:
             input('User updated successfully, press enter to continue . . .')
@@ -102,18 +102,18 @@ def delete_document():
         while True:
 
             collection = input('Key in the collection you want to delete from: ')
-            input_id = input('Key in the "ID" of the user you want to delete: ')
+            input_id = input('Key in the "_id" of the user you want to delete: ')
 
-            existences = helpers.existence_checker(key='id', value=int(input_id), collection=collection)
+            existences = helpers.existence_checker(key='_id', value=input_id, collection=collection)
 
             if existences['exist']:
                 break
 
             else:
-                input('ID or collection does not exist, press enter to try again . . .')
+                input('_id or collection does not exist, press enter to try again . . .')
                 continue
 
-        data = {"unique_key": "id", "unique_value": int(input_id)}
+        data = {'_id': str(input_id)}
         deleted_user = db.delete_one(collection=collection, select=data)
 
         if deleted_user['action']:
