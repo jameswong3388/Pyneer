@@ -9,7 +9,7 @@ Make sure to give it a ⭐ if you like the project 👍.
 
 ## Requirement
 
-`python` - ^3.8*
+`python` - ^3.10*
 
 ## Installation
 
