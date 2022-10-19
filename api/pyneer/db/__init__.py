@@ -21,6 +21,7 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
     e.g. document = {'key': 'value', ...}
 
     Note: If the collection does not exist, it will be created.
+    Note: '_id' will be generated if it does not exist.
     """
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
@@ -63,6 +64,7 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
 
     Note: If the collection does not exist, it will be created.
     Note: If the document = {} then it will skip.
+    Note: '_id' will be generated if it does not exist.
     """
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
@@ -297,6 +299,7 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
     e.g. select = {'key': 'value', ...}
     e.g. replacement = {'key': 'value', ...}
     Note: This method will only update the first record that matches the select.
+    Note: '_id' will be generated if it does not exist.
     """
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
