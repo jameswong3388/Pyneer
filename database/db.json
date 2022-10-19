@@ -1,26 +1,24 @@
 {
   "users": [
     {
-      "id": 1,
-      "uuid": "b04965e6-a9bb-591f-8f8a-1adcb2c8dc39",
       "username": "admin",
       "password": "123",
       "role": "admin",
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": "12"
+      "age": "12",
+      "_id": "bcd1bc01-d846-5331-b7fb-b42660a0f3c9"
     },
     {
-      "id": 2,
-      "uuid": "4b166dbe-d99d-5091-abdd-95b83330ed3a",
       "username": "user",
       "password": "123",
       "role": "user",
       "email": "admin@localhost",
       "gender": "m",
       "birthdate": "1990-01-01",
-      "age": "12"
+      "age": "12",
+      "_id": "392f58eb-1c92-522d-bb6f-3acaceaf9a10"
     }
   ]
 }

@@ -3,35 +3,35 @@ import json
 
 class file_handler:
     def __init__(self, file_path, mode, encoding='utf-8'):
-        self.filename = file_path
-        self.file = None
-        self.error = ""
+        self.action = False
         self.encoding = encoding
+        self.file = None
+        self.filename = file_path
         self.mode = mode
 
     """
     This will be called when the object is used as a context manager (with statement).
     """
+
     def __enter__(self):
         try:
             self.file = open(self.filename, mode=self.mode, encoding=self.encoding)
-            return {"message": self.error, "file": self.file, "loaded_data": json.load(self.file)}
+            self.action = True
+            return {"action": True, "file": self.file, "loaded_data": json.load(self.file)}
 
-        except FileNotFoundError as e:
-            self.error = str(e)
-            return {"message": self.error}
+        except FileNotFoundError:
+            return {"action": self.action}
 
-        except json.decoder.JSONDecodeError as e:
-            self.error = str(e)
-            return {"message": self.error}
+        except json.decoder.JSONDecodeError:
+            return {"action": self.action}
 
-        except Exception as e:
-            self.error = str(e)
-            return {"message": self.error}
+        except Exception:
+            return {"action": self.action}
 
     """
     This will be called when (with statement) is finished.
     """
+
     def __exit__(self, exc_type, exc_val, exc_tb):
-        if self.file and not self.error:
+        if self.file and not self.action:
             self.file.close()
