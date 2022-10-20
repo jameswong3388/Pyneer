@@ -164,7 +164,7 @@ def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
     read_data = read(collection=collection, query=[], db_path=db_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
-        r = filtr(field=query, data=read_data['result'])
+        r = filtr(data=read_data['result'], query=query)
 
         return {"action": True, 'matched_count': r['matched_count'],
                 "result": r['result']}
@@ -173,17 +173,17 @@ def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
         return {'action': False}
 
 
-def filtr(data, field):
+def filtr(data, query):
     """This function will filter the data based on the field
 
     :param data: The data to be filtered
-    :param field: The field to be used to filter the data
+    :param query: The field to be used to filter the data
 
     e.g. field = {'key': 'value', ...}
     e.g. data = [{'key': 'value', ...}, {'key': 'value', ...}]
     """
 
-    result = list(filter(lambda x: all(item in x.items() for item in field.items()), data))
+    result = list(filter(lambda x: all(item in x.items() for item in query.items()), data))
     matched_count = len(result)
 
     return {'acknowledge': True if matched_count > 0 else False, 'matched_count': matched_count, 'result': result}
@@ -212,7 +212,7 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = filtr(field=select, data=loaded_data[collection])
+            a = filtr(data=loaded_data[collection], query=select)
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -261,7 +261,7 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     try:
         modified_count = 0
         if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = filtr(field=select, data=loaded_data[collection])
+            a = filtr(data=loaded_data[collection], query=select)
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -310,7 +310,7 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {} and isinstance(replacement, dict) and replacement != {}:
-            a = filtr(field=select, data=loaded_data[collection])
+            a = filtr(data=loaded_data[collection], query=select)
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -356,7 +356,7 @@ def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {}:
-            a = filtr(field=select, data=loaded_data[collection])
+            a = filtr(data=loaded_data[collection], query=select)
 
             if a['acknowledge']:
                 for i in a['result']:
@@ -398,7 +398,7 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
 
     try:
         if isinstance(select, dict) and select != {}:
-            a = filtr(field=select, data=loaded_data[collection])
+            a = filtr(data=loaded_data[collection], query=select)
 
             if a['acknowledge']:
                 for i in a['result']:
