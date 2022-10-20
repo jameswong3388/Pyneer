@@ -37,20 +37,24 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
             if '_id' not in document.keys():
                 _id = generate__id(collection=collection, db_path=db_path)['_id']
                 document['_id'] = _id
-                loaded_data[collection].append(document)
 
-            # check if '_id' already exist in the collection
+            """
+            todo: check if the _id already exist in the collection
+            """
+
+            loaded_data[collection].append(document)
+            inserted_id = document['_id'] or _id
 
             f['file'].seek(0)
             json.dump(loaded_data, f['file'], indent=2)
 
-            return {"action": True, "inserted_id": _id}
+            return {"action": True, "inserted_id": inserted_id}
 
         else:
             create_collection(collection=collection, db_path=db_path)
             r = insert_one(collection=collection, document=document, db_path=db_path)
 
-            return {"action": True, "inserted_id": r['_id']}
+            return {"action": True, "inserted_id": r['inserted_id']}
 
 
 def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
@@ -84,6 +88,9 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
                         i['_id'] = _id
                         _ids.append(_id)
                     # check if the _id already exist in the collection
+                    else:
+                        _ids.append(i['_id'])
+
                     loaded_data[collection].append(i)
 
                     with open(db_path, 'w') as f:
@@ -98,7 +105,7 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
         create_collection(collection=collection, db_path=db_path)
         r = insert_many(collection=collection, documents=documents, db_path=db_path)
 
-        return {"action": True, "inserted_ids": r["_ids"]}
+        return {"action": True, "inserted_ids": r["inserted_ids"]}
 
     else:
         return {"action": False}
