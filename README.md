@@ -19,7 +19,7 @@ Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the
 git clone https://github.com/jameswong3388/Pyneer.git
 ```
 
-## Project Structure
+## Framework Structure
 
 ```
 .
@@ -87,7 +87,7 @@ c = db.insert_one(collection="users", document={
 # Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
 ```
 
-## Running the project
+## Running the framework
 
 To run the project, simply run `main.py` with `python` or `python3` depending on your system.
 
