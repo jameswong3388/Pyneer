@@ -87,7 +87,7 @@ c = db.insert_one(collection="users", document={
 # Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
 ```
 
-## Running the framework
+## Running the project
 
 To run the project, simply run `main.py` with `python` or `python3` depending on your system.
 
