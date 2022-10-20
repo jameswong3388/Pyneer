@@ -26,12 +26,15 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
-        if not isinstance(document, dict) or document == {}:
-            return {"action": False}
+        if not isinstance(document, dict):
+            return {"action": False, "message": "Document is not a dictionary"}
+
+        if not document:
+            return {"action": False, "message": "Document is empty"}
 
         if collection in loaded_data:
             if '_id' not in document.keys():
@@ -73,42 +76,44 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
     _ids = []
 
-    if isinstance(documents, list) and documents != []:
-        if collection in loaded_data:
-            for i in documents:
-                if i != {}:
-                    if '_id' not in i.keys():
-                        _id = generate__id(collection=collection, db_path=db_path)['_id']
-                        i['_id'] = _id
-                        _ids.append(_id)
-                    # check if the _id already exist in the collection
-                    else:
-                        _ids.append(i['_id'])
+    if not isinstance(documents, list):
+        return {"action": False, "message": "Documents is not a list"}
 
-                    loaded_data[collection].append(i)
+    if not documents:
+        return {"action": False, "message": "Documents is empty"}
 
-                    with open(db_path, 'w') as f:
-                        f.seek(0)
-                        json.dump(loaded_data, f, indent=2)
-
+    if collection in loaded_data:
+        for i in documents:
+            if i != {}:
+                if '_id' not in i.keys():
+                    _id = generate__id(collection=collection, db_path=db_path)['_id']
+                    i['_id'] = _id
+                    _ids.append(_id)
+                # check if the _id already exist in the collection
                 else:
-                    continue
+                    _ids.append(i['_id'])
 
-            return {"action": True, "inserted_ids": _ids}
+                loaded_data[collection].append(i)
 
-        create_collection(collection=collection, db_path=db_path)
-        r = insert_many(collection=collection, documents=documents, db_path=db_path)
+                with open(db_path, 'w') as f:
+                    f.seek(0)
+                    json.dump(loaded_data, f, indent=2)
 
-        return {"action": True, "inserted_ids": r["inserted_ids"]}
+            else:
+                continue
 
-    else:
-        return {"action": False}
+        return {"action": True, "inserted_ids": _ids}
+
+    create_collection(collection=collection, db_path=db_path)
+    r = insert_many(collection=collection, documents=documents, db_path=db_path)
+
+    return {"action": True, "inserted_ids": r["inserted_ids"]}
 
 
 def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
@@ -128,35 +133,34 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
+        if not isinstance(query, list):
+            return {"action": False, "message": "Query is not a list"}
+
         try:
-            if isinstance(query, list):
-                if query:
-                    for i in loaded_data[collection]:
-                        new_dict = {}
+            if query:
+                for i in loaded_data[collection]:
+                    new_dict = {}
 
-                        for key in query:
-                            if key in i:
-                                new_dict[key] = i[key]
-                                new_lists.append(new_dict)
+                    for key in query:
+                        if key in i:
+                            new_dict[key] = i[key]
+                            new_lists.append(new_dict)
 
-                            else:
-                                continue
+                        else:
+                            continue
 
-                    return {"action": True, "matched_count": len(new_lists),
-                            "result": new_lists}
+                return {"action": True, "matched_count": len(new_lists),
+                        "result": new_lists}
 
-                return {"action": True, "matched_count": len(loaded_data[collection]),
-                        "result": loaded_data[collection]}
-
-            else:
-                return {"action": False}
+            return {"action": True, "matched_count": len(loaded_data[collection]),
+                    "result": loaded_data[collection]}
 
         except KeyError:
-            return {"action": False}
+            return {"action": False, "message": "Collection does not exist"}
 
 
 def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
@@ -218,7 +222,7 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
@@ -269,7 +273,7 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
@@ -322,38 +326,43 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
+    if not isinstance(select, dict):
+        return {"action": False, 'message': 'Select is not a dictionary'}
+
+    if not isinstance(replacement, dict):
+        return {"action": False, 'message': 'Replacement is not a dictionary'}
+
+    if replacement == {}:
+        return {"action": False, 'message': 'Replacement is empty'}
+
     try:
-        if isinstance(select, dict) and select != {} and isinstance(replacement, dict) and replacement != {}:
-            a = filtr(data=loaded_data[collection], query=select)
+        a = filtr(data=loaded_data[collection], query=select)
 
-            if a['acknowledge']:
-                for i in a['result']:
-                    # check if 'id' is in the replacement
-                    if '_id' not in replacement:
-                        _id = generate__id(collection=collection, db_path=db_path)['_id']
-                        replacement['_id'] = _id
+        if a['acknowledge']:
+            for i in a['result']:
+                # check if 'id' is in the replacement
+                if '_id' not in replacement:
+                    _id = generate__id(collection=collection, db_path=db_path)['_id']
+                    replacement['_id'] = _id
 
-                    i.clear()
-                    i.update(replacement)
-                    break
+                i.clear()
+                i.update(replacement)
+                break
 
-                with open(db_path, 'w+') as f:
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
+            with open(db_path, 'w+') as f:
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
-            else:
-                return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
-
+            return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
         else:
-            return {"action": False}
+            return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
 
     except KeyError:
-        return {"action": False}
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
@@ -368,32 +377,34 @@ def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
+    if not isinstance(select, dict):
+        return {"action": False, 'message': 'Select is not a dictionary'}
+
+    if select == {}:
+        return {"action": False, 'message': 'Select is empty'}
+
     try:
-        if isinstance(select, dict) and select != {}:
-            a = filtr(data=loaded_data[collection], query=select)
+        a = filtr(data=loaded_data[collection], query=select)
 
-            if a['acknowledge']:
-                for i in a['result']:
-                    loaded_data[collection].remove(i)
-                    break
+        if a['acknowledge']:
+            for i in a['result']:
+                loaded_data[collection].remove(i)
+                break
 
-                with open(db_path, 'w+') as f:
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
+            with open(db_path, 'w+') as f:
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "deleted_count": 1, "matched_count": a['matched_count']}
-            else:
-                return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
-
+            return {"action": True, "deleted_count": 1, "matched_count": a['matched_count']}
         else:
-            return {"action": False}
+            return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
 
     except KeyError:
-        return {"action": False}
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
@@ -410,31 +421,33 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
 
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
+    if not isinstance(select, dict):
+        return {"action": False, 'message': 'Select is not a dictionary'}
+
+    if select == {}:
+        return {"action": False, 'message': 'Select is empty'}
+
     try:
-        if isinstance(select, dict) and select != {}:
-            a = filtr(data=loaded_data[collection], query=select)
+        a = filtr(data=loaded_data[collection], query=select)
 
-            if a['acknowledge']:
-                for i in a['result']:
-                    loaded_data[collection].remove(i)
+        if a['acknowledge']:
+            for i in a['result']:
+                loaded_data[collection].remove(i)
 
-                with open(db_path, 'w+') as f:
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
+            with open(db_path, 'w+') as f:
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "deleted_count": a['matched_count'], "matched_count": a['matched_count']}
-            else:
-                return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
-
+            return {"action": True, "deleted_count": a['matched_count'], "matched_count": a['matched_count']}
         else:
-            return {"action": False}
+            return {"action": False, "deleted_count": 0, "matched_count": a['matched_count']}
 
     except KeyError:
-        return {"action": False}
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def create_db(file_path):
