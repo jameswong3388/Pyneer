@@ -75,7 +75,10 @@ b = db.create_collection("database/users.json", "users")
 # Create a new user
 c = db.insert_one(collection="users", document={
     "username": "jameswong3388",
-    "password": "password"
+    "password": "password",
+    "email": "user@localhost.com",
+    "age": 18,
+    "gender": 'm'
 }, db_path="users/db.json")
 
 # Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
