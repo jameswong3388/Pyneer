@@ -44,13 +44,13 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
             f['file'].seek(0)
             json.dump(loaded_data, f['file'], indent=2)
 
-            return {"action": True, "_id": _id}
+            return {"action": True, "inserted_id": _id}
 
         else:
             create_collection(collection=collection, db_path=db_path)
             r = insert_one(collection=collection, document=document, db_path=db_path)
 
-            return {"action": True, "_id": r['_id']}
+            return {"action": True, "inserted_id": r['_id']}
 
 
 def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
@@ -93,12 +93,12 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
                 else:
                     continue
 
-            return {"action": True, "_ids": _ids}
+            return {"action": True, "inserted_ids": _ids}
 
         create_collection(collection=collection, db_path=db_path)
         r = insert_many(collection=collection, documents=documents, db_path=db_path)
 
-        return {"action": True, "_ids": r["_ids"]}
+        return {"action": True, "inserted_ids": r["_ids"]}
 
     else:
         return {"action": False}
