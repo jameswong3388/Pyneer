@@ -59,7 +59,7 @@ the database file by default, but you can easily change it when calling the APIs
 ### Usage
 
 ```python
-# An example using `db.*` API to create a new user
+# An example using Pyneer's `db.*` API to create a new user
 from api.pyneer import db
 
 # Create a new database
