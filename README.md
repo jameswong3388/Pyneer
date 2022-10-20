@@ -59,14 +59,24 @@ the database file by default, but you can easily change it when calling the APIs
 ### Usage
 
 ```python
-# An example using `db.insert_one()` API
+# An example using `db.*` API to create a new user
 from api.pyneer import db
 
+# Create a new database
+a = db.create_db("database/users.json")
+
+# Output: {"action": True}
+
+# Create a new collection
+b = db.create_collection("database/users.json", "users")
+
+# Output: {"action": True}
+
 # Create a new user
-x = db.insert_one(collection="users", document={
+c = db.insert_one(collection="users", document={
     "username": "jameswong3388",
     "password": "password"
-}, db_path="database/db.json")
+}, db_path="users/db.json")
 
 # Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
 ```
