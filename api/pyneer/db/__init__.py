@@ -191,6 +191,8 @@ def filtr(data, query):
 
     e.g. field = {'key': 'value', ...}
     e.g. data = [{'key': 'value', ...}, {'key': 'value', ...}]
+
+    Note: If query = {} then all the documents in the collection will be returned.
     """
 
     result = list(filter(lambda x: all(item in x.items() for item in query.items()), data))
@@ -220,31 +222,36 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
+    if not isinstance(select, dict):
+        return {"action": False, 'message': 'Select is not a dictionary'}
+
+    if not isinstance(update, dict):
+        return {"action": False, 'message': 'Update is not a dictionary'}
+
+    if update == {}:
+        return {"action": False, 'message': 'Update is empty'}
+
     try:
-        if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = filtr(data=loaded_data[collection], query=select)
+        a = filtr(data=loaded_data[collection], query=select)
 
-            if a['acknowledge']:
-                for i in a['result']:
-                    for key, value in update.items():
-                        i[key] = value
+        if a['acknowledge']:
+            for i in a['result']:
+                for key, value in update.items():
+                    i[key] = value
 
-                    break
+                break
 
-                with open(db_path, 'w+') as f:
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
+            with open(db_path, 'w+') as f:
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
-
-            else:
-                return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
+            return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
 
         else:
-            return {"action": False}
+            return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
 
     except KeyError:
-        return {"action": False}
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
@@ -266,32 +273,37 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
+    if not isinstance(select, dict):
+        return {"action": False, 'message': 'Select is not a dictionary'}
+
+    if not isinstance(update, dict):
+        return {"action": False, 'message': 'Update is not a dictionary'}
+
+    if update == {}:
+        return {"action": False, 'message': 'Update is empty'}
+
     try:
         modified_count = 0
-        if isinstance(select, dict) and isinstance(update, dict) and update != {}:
-            a = filtr(data=loaded_data[collection], query=select)
+        a = filtr(data=loaded_data[collection], query=select)
 
-            if a['acknowledge']:
-                for i in a['result']:
-                    for key, value in update.items():
-                        i[key] = value
+        if a['acknowledge']:
+            for i in a['result']:
+                for key, value in update.items():
+                    i[key] = value
 
-                    modified_count += 1
+                modified_count += 1
 
-                with open(db_path, 'w+') as f:
-                    f.seek(0)
-                    json.dump(loaded_data, f, indent=2)
+            with open(db_path, 'w+') as f:
+                f.seek(0)
+                json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": modified_count, "matched_count": a['matched_count']}
-
-            else:
-                return {"action": False, "modified_count": modified_count, "matched_count": a['matched_count']}
+            return {"action": True, "modified_count": modified_count, "matched_count": a['matched_count']}
 
         else:
-            return {"action": False}
+            return {"action": False, "modified_count": modified_count, "matched_count": a['matched_count']}
 
     except KeyError:
-        return {"action": False}
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
