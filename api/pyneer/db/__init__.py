@@ -132,26 +132,30 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-        if isinstance(query, list):
-            if query:
-                for i in loaded_data[collection]:
-                    new_dict = {}
+        try:
+            if isinstance(query, list):
+                if query:
+                    for i in loaded_data[collection]:
+                        new_dict = {}
 
-                    for key in query:
-                        if key in i:
-                            new_dict[key] = i[key]
-                            new_lists.append(new_dict)
+                        for key in query:
+                            if key in i:
+                                new_dict[key] = i[key]
+                                new_lists.append(new_dict)
 
-                        else:
-                            continue
+                            else:
+                                continue
 
-                return {"action": True, "matched_count": len(new_lists),
-                        "result": new_lists}
+                    return {"action": True, "matched_count": len(new_lists),
+                            "result": new_lists}
 
-            return {"action": True, "matched_count": len(loaded_data[collection]),
-                    "result": loaded_data[collection]}
+                return {"action": True, "matched_count": len(loaded_data[collection]),
+                        "result": loaded_data[collection]}
 
-        else:
+            else:
+                return {"action": False}
+
+        except KeyError:
             return {"action": False}
 
 
@@ -173,8 +177,7 @@ def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
         r = filtr(data=read_data['result'], query=query)
 
-        return {"action": True, 'matched_count': r['matched_count'],
-                "result": r['result']}
+        return {"action": True, 'matched_count': r['matched_count'], "result": r['result']}
 
     else:
         return {'action': False}
@@ -232,12 +235,10 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": 1,
-                        "matched_count": a['matched_count']}
+                return {"action": True, "modified_count": 1, "matched_count": a['matched_count']}
 
             else:
-                return {"action": False, "modified_count": 0,
-                        "matched_count": a['matched_count']}
+                return {"action": False, "modified_count": 0, "matched_count": a['matched_count']}
 
         else:
             return {"action": False}
@@ -281,12 +282,10 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
                     f.seek(0)
                     json.dump(loaded_data, f, indent=2)
 
-                return {"action": True, "modified_count": modified_count,
-                        "matched_count": a['matched_count']}
+                return {"action": True, "modified_count": modified_count, "matched_count": a['matched_count']}
 
             else:
-                return {"action": False, "modified_count": modified_count,
-                        "matched_count": a['matched_count']}
+                return {"action": False, "modified_count": modified_count, "matched_count": a['matched_count']}
 
         else:
             return {"action": False}
