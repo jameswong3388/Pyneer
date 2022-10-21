@@ -23,17 +23,17 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
     Note: '_id' will be generated if it does not exist.
     """
 
+    if not isinstance(document, dict):
+        return {"action": False, "message": "Document is not a dictionary"}
+
+    if not document:
+        return {"action": False, "message": "Document is empty"}
+
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
             return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
-
-        if not isinstance(document, dict):
-            return {"action": False, "message": "Document is not a dictionary"}
-
-        if not document:
-            return {"action": False, "message": "Document is empty"}
 
         if collection in loaded_data:
             if '_id' not in document.keys():
@@ -73,17 +73,17 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
     Note: '_id' will be generated if it does not exist.
     """
 
-    with handlers.file_handler(mode='r+', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(documents, list):
         return {"action": False, "message": "Documents is not a list"}
 
     if not documents:
         return {"action": False, "message": "Documents is empty"}
+
+    with handlers.file_handler(mode='r+', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     if collection in loaded_data:
         _ids = []
@@ -129,19 +129,19 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
     Note: If key does not exist, it will be skipped.
    """
 
+    if not isinstance(query, list):
+        return {"action": False, "message": "Query is not a list"}
+
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
             return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
-        if not isinstance(query, list):
-            return {"action": False, "message": "Query is not a list"}
-
         try:
             if query:
                 new_lists = []
-                
+
                 for i in loaded_data[collection]:
                     new_dict = {}
 
@@ -220,12 +220,6 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     Note: This method will only update the first record that matches the select.
     """
 
-    with handlers.file_handler(mode='r', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
 
@@ -234,6 +228,12 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
     if update == {}:
         return {"action": False, 'message': 'Update is empty'}
+
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     try:
         a = filtr(data=loaded_data[collection], query=select)
@@ -271,12 +271,6 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     e.g. update = {'key': 'value', ...}
     """
 
-    with handlers.file_handler(mode='r', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
 
@@ -285,6 +279,12 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
 
     if update == {}:
         return {"action": False, 'message': 'Update is empty'}
+
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     try:
         modified_count = 0
@@ -324,12 +324,6 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
     Note: '_id' will be generated if it does not exist.
     """
 
-    with handlers.file_handler(mode='r', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
 
@@ -338,6 +332,12 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
 
     if replacement == {}:
         return {"action": False, 'message': 'Replacement is empty'}
+
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     try:
         a = filtr(data=loaded_data[collection], query=select)
@@ -375,17 +375,17 @@ def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
     e.g. select = {'key': 'value', ...}
     """
 
-    with handlers.file_handler(mode='r', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
 
     if select == {}:
         return {"action": False, 'message': 'Select is empty'}
+
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     try:
         a = filtr(data=loaded_data[collection], query=select)
@@ -419,17 +419,17 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
     where key and value is the key value used to identify the records to be deleted.
     """
 
-    with handlers.file_handler(mode='r', file_path=db_path) as f:
-        if not f['action']:
-            return {"action": False, "message": "File does not exist"}
-
-        loaded_data = f["loaded_data"]
-
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
 
     if select == {}:
         return {"action": False, 'message': 'Select is empty'}
+
+    with handlers.file_handler(mode='r', file_path=db_path) as f:
+        if not f['action']:
+            return {"action": False, "message": "File does not exist"}
+
+        loaded_data = f["loaded_data"]
 
     try:
         a = filtr(data=loaded_data[collection], query=select)
@@ -477,21 +477,20 @@ def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
     e.g. collection = 'collection_name'
     """
 
+    if collection == '':
+        return {"action": False, "message": "Collection name cannot be empty"}
+
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
             return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
-        if collection == '':
-            return {"action": False, "message": "Collection name cannot be empty"}
-
         if collection not in loaded_data:
             loaded_data[collection] = []
 
             f['file'].seek(0)
             json.dump(loaded_data, f['file'], indent=2)
-            f['file'].close()
 
             return {"action": True}
 
