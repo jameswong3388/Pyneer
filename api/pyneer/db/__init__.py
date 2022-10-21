@@ -40,9 +40,8 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
                 _id = generate__id(collection=collection, db_path=db_path)['_id']
                 document['_id'] = _id
 
-            """
-            todo: check if the _id already exist in the collection
-            """
+            if document['_id'] in [i['_id'] for i in loaded_data[collection]]:
+                return {"action": False, "message": "Duplicate key error for _id"}
 
             loaded_data[collection].append(document)
             inserted_id = document['_id'] or _id
@@ -70,7 +69,8 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
 
     Note: If the collection does not exist, it will be created.
     Note: If the document = {} then it will skip.
-    Note: '_id' will be generated if it does not exist.
+    Note: '_id' will be generated if it does not exist, if duplicate '_id' is found, the remaining documents will be
+    skipped.
     """
 
     if not isinstance(documents, list):
@@ -94,8 +94,10 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
                     _id = generate__id(collection=collection, db_path=db_path)['_id']
                     i['_id'] = _id
                     _ids.append(_id)
-                # check if the _id already exist in the collection
                 else:
+                    if i['_id'] in [i['_id'] for i in loaded_data[collection]]:
+                        return {"action": False, "message": "Duplicate key error for _id", "inserted_ids": _ids}
+
                     _ids.append(i['_id'])
 
                 loaded_data[collection].append(i)
@@ -344,10 +346,13 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
 
         if a['acknowledge']:
             for i in a['result']:
-                # check if 'id' is in the replacement
+
                 if '_id' not in replacement:
                     _id = generate__id(collection=collection, db_path=db_path)['_id']
                     replacement['_id'] = _id
+
+                if replacement['_id'] in [i['_id'] for i in loaded_data[collection]]:
+                    return {"action": False, "message": "Duplicate key error for _id"}
 
                 i.clear()
                 i.update(replacement)
