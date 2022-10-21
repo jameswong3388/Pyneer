@@ -562,18 +562,3 @@ def db():
     files = os.listdir('database')
 
     return files
-
-
-def total_size(collection, db_path=DEFAULT_DATABASE_PATH):
-    """This function will return the total size of the collection
-
-    :param collection: The collection name
-    :param db_path: The file used to store the data
-    """
-
-    loaded_data = read(collection=collection, query=[], db_path=db_path)
-
-    if loaded_data['action']:
-        return {'action': True, 'result': str(sys.getsizeof(loaded_data['result'])) + ' bytes'}
-
-    return {'action': False, 'message': loaded_data['message']}
