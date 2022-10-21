@@ -80,8 +80,6 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    _ids = []
-
     if not isinstance(documents, list):
         return {"action": False, "message": "Documents is not a list"}
 
@@ -89,6 +87,8 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, "message": "Documents is empty"}
 
     if collection in loaded_data:
+        _ids = []
+
         for i in documents:
             if i != {}:
                 if '_id' not in i.keys():
@@ -110,10 +110,11 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
 
         return {"action": True, "inserted_ids": _ids}
 
-    create_collection(collection=collection, db_path=db_path)
-    r = insert_many(collection=collection, documents=documents, db_path=db_path)
+    else:
+        create_collection(collection=collection, db_path=db_path)
+        r = insert_many(collection=collection, documents=documents, db_path=db_path)
 
-    return {"action": True, "inserted_ids": r["inserted_ids"]}
+        return {"action": True, "inserted_ids": r["inserted_ids"]}
 
 
 def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
@@ -129,8 +130,6 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
     Note: If key does not exist, it will be skipped.
    """
 
-    new_lists = []
-
     with handlers.file_handler(mode='r', file_path=db_path) as f:
         if not f['action']:
             return {"action": False, "message": "File does not exist"}
@@ -142,6 +141,8 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
 
         try:
             if query:
+                new_lists = []
+                
                 for i in loaded_data[collection]:
                     new_dict = {}
 
