@@ -466,7 +466,7 @@ def create_db(file_path):
         return {"action": True}
 
     except FileExistsError:
-        return {"action": False}
+        return {"action": False, "message": "File already exist"}
 
 
 def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
@@ -474,29 +474,30 @@ def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
 
     :param collection: The collection to be created
     :param db_path: The file used to store the data
+
+    e.g. collection = 'collection_name'
     """
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
-            return {"action": False}
+            return {"action": False, "message": "File does not exist"}
 
         loaded_data = f["loaded_data"]
 
-        try:
-            if collection not in loaded_data and collection != '':
-                loaded_data[collection] = []
+        if collection == '':
+            return {"action": False, "message": "Collection name cannot be empty"}
 
-                f['file'].seek(0)
-                json.dump(loaded_data, f['file'], indent=2)
-                f['file'].close()
+        if collection not in loaded_data:
+            loaded_data[collection] = []
 
-                return {"action": True}
+            f['file'].seek(0)
+            json.dump(loaded_data, f['file'], indent=2)
+            f['file'].close()
 
-            else:
-                return {"action": False}
+            return {"action": True}
 
-        except KeyError:
-            return {"action": False}
+        else:
+            return {"action": False, "message": "Collection already exist"}
 
 
 def drop_db(db_path=DEFAULT_DATABASE_PATH):
@@ -511,7 +512,7 @@ def drop_db(db_path=DEFAULT_DATABASE_PATH):
         return {"action": True}
 
     except FileNotFoundError:
-        return {"action": False}
+        return {"action": False, "message": "File does not exist"}
 
 
 def drop_collection(collection, db_path=DEFAULT_DATABASE_PATH):
@@ -527,20 +528,16 @@ def drop_collection(collection, db_path=DEFAULT_DATABASE_PATH):
 
         loaded_data = f["loaded_data"]
 
-    try:
-        if collection in loaded_data:
-            loaded_data.pop(collection)
+    if collection in loaded_data:
+        loaded_data.pop(collection)
 
-            with open(db_path, mode='w+', encoding='utf-8') as f:
-                json.dump(loaded_data, f, indent=2)
+        with open(db_path, mode='w+', encoding='utf-8') as f:
+            json.dump(loaded_data, f, indent=2)
 
-            return {"action": True}
+        return {"action": True}
 
-        else:
-            return {"action": False}
-
-    except KeyError:
-        return {"action": False}
+    else:
+        return {"action": False, 'message': 'Collection does not exist'}
 
 
 def generate__id(collection, db_path=DEFAULT_DATABASE_PATH):
@@ -555,7 +552,7 @@ def generate__id(collection, db_path=DEFAULT_DATABASE_PATH):
         id_count = read_data['matched_count'] + 1
         return {'action': True, '_id': str(uuid.uuid5(uuid.NAMESPACE_URL, str(id_count) + collection + db_path))}
 
-    return {'action': False}
+    return {'action': False, 'message': read_data['message']}
 
 
 def db():
@@ -579,4 +576,4 @@ def total_size(collection, db_path=DEFAULT_DATABASE_PATH):
     if loaded_data['action']:
         return {'action': True, 'result': str(sys.getsizeof(loaded_data['result'])) + ' bytes'}
 
-    return {'action': False}
+    return {'action': False, 'message': loaded_data['message']}
