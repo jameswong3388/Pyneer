@@ -2,7 +2,6 @@
 Pyneer's `db.*` API
 """
 import json
-import sys
 import os
 import uuid
 
