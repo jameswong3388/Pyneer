@@ -118,7 +118,7 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
         return {"action": True, "inserted_ids": r["inserted_ids"]}
 
 
-def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
+def read(collection, query=[], db_path=DEFAULT_DATABASE_PATH):
     """This function reads a record from the collection
 
     :param collection: Collection to be used to store the data
@@ -165,7 +165,7 @@ def read(collection, query, db_path=DEFAULT_DATABASE_PATH):
             return {"action": False, "message": "Collection does not exist"}
 
 
-def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
+def find(collection, query={}, db_path=DEFAULT_DATABASE_PATH):
     """This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
@@ -178,7 +178,7 @@ def find(collection, query, db_path=DEFAULT_DATABASE_PATH):
     Note: If query = {} then all the documents in the collection will be returned.
     """
 
-    read_data = read(collection=collection, query=[], db_path=db_path)
+    read_data = read(collection=collection, db_path=db_path)
 
     if read_data['action'] and read_data['result'] and isinstance(query, dict):
         r = filtr(data=read_data['result'], query=query)
@@ -196,7 +196,7 @@ def filtr(data, query):
     :param query: The field to be used to filter the data
 
     e.g. field = {'key': 'value', ...}
-    e.g. data = [{'key': 'value', ...}, {'key': 'value', ...}]
+    e.g. data = [{'key': 'value', ...}, {'key2': 'value2', ...}]
 
     Note: If query = {} then all the documents in the collection will be returned.
     """
@@ -549,7 +549,7 @@ def generate__id(collection, db_path=DEFAULT_DATABASE_PATH):
     :param collection: The collection name
     :param db_path: The file used to store the data
     """
-    read_data = read(collection=collection, query=[], db_path=db_path)
+    read_data = read(collection=collection, db_path=db_path)
 
     if read_data['action']:
         id_count = read_data['matched_count'] + 1
