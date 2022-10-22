@@ -180,13 +180,16 @@ def find(collection, query={}, db_path=DEFAULT_DATABASE_PATH):
 
     read_data = read(collection=collection, db_path=db_path)
 
-    if read_data['action'] and read_data['result'] and isinstance(query, dict):
+    if not isinstance(query, dict):
+        return {"action": False, "message": "Query is not a dictionary"}
+
+    if read_data['action'] and read_data['result']:
         r = filtr(data=read_data['result'], query=query)
 
         return {"action": True, 'matched_count': r['matched_count'], "result": r['result']}
 
     else:
-        return {'action': False}
+        return {'action': False, 'message': read_data['message']}
 
 
 def filtr(data, query):
