@@ -11,7 +11,7 @@ def admin_menu():
     print('2. Delete Collection\'s documents')
     print('3. View Collection\'s documents')
     print('4. Create new Collection')
-    print('5. Back')
+    print('5. Logout')
     print('0. Quit')
 
     option = input('Please select an option >>  ')
