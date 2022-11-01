@@ -20,7 +20,7 @@ Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the
 git clone https://github.com/jameswong3388/Pyneer.git
 ```
 
-## Project Structure
+## Project Structure Overview
 
 ```
 .
