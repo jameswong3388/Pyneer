@@ -3,7 +3,7 @@ Schema is used to validate the data that is being passed to the database
 """
 
 
-class schema:
+class Schema:
     def __init__(self, schemas):
         self.schema = schemas
 
