@@ -3,7 +3,8 @@
 Pyneer is a minimal scaffolding designed to help students with their school's Python assignments.
 
 Pyneer comes with minimal scaffolding as well as basic authentication and admin functionality to help you quickly get
-started with your project. It comes with a `MongoDB-like` API out of the box, so you can focus on what's important to be done !
+started with your project. It comes with a [`MongoDB-like`](https://www.mongodb.com/docs/manual/crud/) API out of the box,
+so you can focus on what's important to be done !
 
 Make sure to give it a ⭐ if you like the project 👍.
 
