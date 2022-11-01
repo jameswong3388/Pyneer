@@ -69,12 +69,12 @@ from api.pyneer import db
 # Create a new database
 a = db.create_db("database/users.json")
 
-# Output: {"action": True}
+# Return: {"action": True}
 
 # Create a new collection
 b = db.create_collection("database/users.json", "users")
 
-# Output: {"action": True}
+# Return: {"action": True}
 
 # Create a new user
 c = db.insert_one(collection="users", document={
@@ -85,7 +85,7 @@ c = db.insert_one(collection="users", document={
     "gender": 'm'
 }, db_path="users/db.json")
 
-# Output: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
+# Return: {'action': True, '_id': '6b0baf4d-5ddf-5f55-869c-5d8f9ba3f923'}
 ```
 
 ## Running the project
