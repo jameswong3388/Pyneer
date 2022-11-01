@@ -48,7 +48,7 @@ git clone https://github.com/jameswong3388/Pyneer.git
 
 `\api` - Here contain all the API-related files, and all of Pyneer's APIs are here.
 
-`\database` - Here contain the database related file, `db.json` or `db.txt`.
+`\database` - Here contain the database related file, Pyneer supports `.json` and `.txt` file.
 
 `\pages` - Here contain your pages, and all of Pyneer's scaffolding pages are here.
 
