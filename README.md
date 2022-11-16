@@ -14,7 +14,7 @@ Make sure to give it a ⭐ if you like the project 👍.
 
 ## Installation
 
-Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the project.
+Make sure you have [`git`](https://git-scm.com/downloads) installed to clone the project or download the [`zip`](https://github.com/jameswong3388/Pyneer/archive/refs/heads/master.zip) file.
 
 ```bash
 git clone https://github.com/jameswong3388/Pyneer.git
