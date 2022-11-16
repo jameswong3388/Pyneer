@@ -202,6 +202,8 @@ def filtr(data, query):
     e.g. data = [{'key': 'value', ...}, {'key2': 'value2', ...}]
 
     Note: If query = {} then all the documents in the collection will be returned.
+    Note: This function does not supoort nested filtration yet,
+    e.g. filtr(data={'a': {{'a': [1,2,3], 'b': {}}}}, query={'b': 1})
     """
 
     result = list(filter(lambda x: all(item in x.items() for item in query.items()), data))
