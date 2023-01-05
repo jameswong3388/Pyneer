@@ -10,7 +10,7 @@ from api.pyneer.db import handlers
 DEFAULT_DATABASE_PATH = 'database/db.json'
 
 
-def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
+def insert_one(collection: str, document: dict, db_path=DEFAULT_DATABASE_PATH):
     """ This function create single record in the collection
 
     :param collection: Collection to be used to store the data
@@ -22,6 +22,9 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
     Note: If the collection does not exist, it will be created.
     Note: '_id' will be generated if it does not exist.
     """
+
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(document, dict):
         return {"action": False, "message": "Document is not a dictionary"}
@@ -58,7 +61,7 @@ def insert_one(collection, document, db_path=DEFAULT_DATABASE_PATH):
             return {"action": True, "inserted_id": r['inserted_id']}
 
 
-def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
+def insert_many(collection: str, documents: [dict], db_path=DEFAULT_DATABASE_PATH):
     """This function create single record in the collection
 
     :param collection: Collection to be used to store the data
@@ -72,6 +75,8 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
     Note: '_id' will be generated if it does not exist, if duplicate '_id' is found, the remaining documents will be
     skipped.
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(documents, list):
         return {"action": False, "message": "Documents is not a list"}
@@ -118,7 +123,7 @@ def insert_many(collection, documents, db_path=DEFAULT_DATABASE_PATH):
         return {"action": True, "inserted_ids": r["inserted_ids"]}
 
 
-def read(collection, query=[], db_path=DEFAULT_DATABASE_PATH):
+def read(collection: str, query=[], db_path=DEFAULT_DATABASE_PATH):
     """This function reads a record from the collection
 
     :param collection: Collection to be used to store the data
@@ -130,6 +135,8 @@ def read(collection, query=[], db_path=DEFAULT_DATABASE_PATH):
     Note: If query = [] then all the documents in the collection will be returned.
     Note: If key does not exist, it will be skipped.
    """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(query, list):
         return {"action": False, "message": "Query is not a list"}
@@ -165,7 +172,7 @@ def read(collection, query=[], db_path=DEFAULT_DATABASE_PATH):
             return {"action": False, "message": "Collection does not exist"}
 
 
-def find(collection, query={}, db_path=DEFAULT_DATABASE_PATH):
+def find(collection: str, query={}, db_path=DEFAULT_DATABASE_PATH):
     """This function will query from 'file' and return a result
     with all the data that matches the key and value.
 
@@ -177,6 +184,8 @@ def find(collection, query={}, db_path=DEFAULT_DATABASE_PATH):
     Note: If nothing is found, it will return an empty list, [].
     Note: If query = {} then all the documents in the collection will be returned.
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     read_data = read(collection=collection, db_path=db_path)
 
@@ -192,17 +201,17 @@ def find(collection, query={}, db_path=DEFAULT_DATABASE_PATH):
         return {'action': False, 'message': read_data['message']}
 
 
-def filtr(data, query):
+def filtr(data: [dict], query: dict):
     """This function will filter the data based on the field
 
     :param data: The data to be filtered
     :param query: The field to be used to filter the data
 
-    e.g. field = {'key': 'value', ...}
+    e.g. query = {'key': 'value', ...}
     e.g. data = [{'key': 'value', ...}, {'key2': 'value2', ...}]
 
     Note: If query = {} then all the documents in the collection will be returned.
-    Note: This function does not supoort nested filtration yet,
+    Note: This function does not support nested filtration yet,
     e.g. filtr(data={'a': {{'a': [1,2,3], 'b': {}}}}, query={'b': 1})
     """
 
@@ -212,7 +221,7 @@ def filtr(data, query):
     return {'acknowledge': True if matched_count > 0 else False, 'matched_count': matched_count, 'result': result}
 
 
-def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
+def update_one(collection: str, select: dict, update: dict, db_path=DEFAULT_DATABASE_PATH):
     """This function update a single record in the collection
 
     :param collection: The collection to be used to store the data
@@ -226,6 +235,8 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     Note: If the Key in the select does not exist, it will be created and the value will be updated.
     Note: This method will only update the first record that matches the select.
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
@@ -265,9 +276,9 @@ def update_one(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, 'message': 'Collection does not exist'}
 
 
-def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
+def update_many(collection: str, select: dict, update: dict, db_path=DEFAULT_DATABASE_PATH):
     """
-    This function updates multiple records in the collection
+    This function updates multiple records in the collection that matches the all select
 
     :param collection: The collection to be used to store the data
     :param select: select: The filter to be used to identify the records to be updated
@@ -277,6 +288,8 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
     e.g. select = {'key': 'value', ...}
     e.g. update = {'key': 'value', ...}
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
@@ -317,7 +330,7 @@ def update_many(collection, select, update, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, 'message': 'Collection does not exist'}
 
 
-def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
+def replace_one(collection: str, select: dict, replacement: dict, db_path=DEFAULT_DATABASE_PATH):
     """This function replace a single record in the collection
 
     :param collection: The collection to be used to store the data
@@ -330,6 +343,8 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
     Note: This method will only update the first record that matches the select.
     Note: '_id' will be generated if it does not exist.
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
@@ -375,7 +390,7 @@ def replace_one(collection, select, replacement, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, 'message': 'Collection does not exist'}
 
 
-def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
+def delete_one(collection: str, select: dict, db_path=DEFAULT_DATABASE_PATH):
     """This function deletes a record from the collection
 
     :param collection: The collection to be used to store the data
@@ -384,6 +399,8 @@ def delete_one(collection, select, db_path=DEFAULT_DATABASE_PATH):
 
     e.g. select = {'key': 'value', ...}
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
@@ -428,6 +445,8 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
     e.g. select = {'key': 'value', ...}
     where key and value is the key value used to identify the records to be deleted.
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     if not isinstance(select, dict):
         return {"action": False, 'message': 'Select is not a dictionary'}
@@ -460,13 +479,15 @@ def delete_many(collection, select, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, 'message': 'Collection does not exist'}
 
 
-def create_db(file_path):
+def create_db(file_path: str):
     """This function creates a database file
 
     :param file_path: The file used to store the data
 
     e.g. file_path = 'path/to/file.json'
     """
+    if not isinstance(file_path, str):
+        return {"action": False, "message": "File path is not a string"}
 
     try:
         with open(file_path, mode='x', encoding='utf-8') as f:
@@ -478,7 +499,7 @@ def create_db(file_path):
         return {"action": False, "message": "File already exist"}
 
 
-def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
+def create_collection(collection: str, db_path=DEFAULT_DATABASE_PATH):
     """This function creates a collection
 
     :param collection: The collection to be created
@@ -486,8 +507,10 @@ def create_collection(collection, db_path=DEFAULT_DATABASE_PATH):
 
     e.g. collection = 'collection_name'
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
-    if collection == '':
+    if not collection:
         return {"action": False, "message": "Collection name cannot be empty"}
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
@@ -523,12 +546,14 @@ def drop_db(db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, "message": "File does not exist"}
 
 
-def drop_collection(collection, db_path=DEFAULT_DATABASE_PATH):
+def drop_collection(collection: str, db_path=DEFAULT_DATABASE_PATH):
     """This function deletes a collection
 
     :param collection: The collection to be deleted
     :param db_path: The file used to store the data
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
 
     with handlers.file_handler(mode='r+', file_path=db_path) as f:
         if not f['action']:
@@ -548,12 +573,15 @@ def drop_collection(collection, db_path=DEFAULT_DATABASE_PATH):
         return {"action": False, 'message': 'Collection does not exist'}
 
 
-def generate__id(collection, db_path=DEFAULT_DATABASE_PATH):
+def generate__id(collection: str, db_path=DEFAULT_DATABASE_PATH):
     """This function will generate unique _id for the record to be inserted
 
     :param collection: The collection name
     :param db_path: The file used to store the data
     """
+    if not isinstance(collection, str):
+        return {"action": False, "message": "Collection is not a string"}
+
     read_data = read(collection=collection, db_path=db_path)
 
     if read_data['action']:
