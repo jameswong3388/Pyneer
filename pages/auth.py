@@ -75,9 +75,7 @@ def register_page():
 
         validation_method = [helpers.email_input_checker, helpers.gender_checker, helpers.birthdate_format_checker]
 
-        new_id = db.generate_id(collection='users')
-
-        validated_inputs = {"id": new_id['result']}
+        validated_inputs = {"role": "user"}
 
         while True:
             username = input('Username : ')
@@ -147,8 +145,10 @@ def authenticator(auth_username, auth_password):
                 helpers.processing(['Logging in . . .', 'Welcome, {}!'.format(data['username'])])
                 if data['role'] == 'admin':
                     admin.admin_menu()
+                    break
                 else:
                     user.main_menu(data)
+                    break
 
         if not authenticate:
             print('Invalid username or password')

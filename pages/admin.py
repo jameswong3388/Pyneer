@@ -55,7 +55,7 @@ def update_document():
         while True:
 
             collection = input('Key in the collection you want to update: ')
-            input_id = input('Key in the "_id" of the user you want to update: ')
+            input_id = input('Key in the "_id" of the object you want to update: ')
 
             existence = helpers.existence_checker(key='_id', value=input_id, collection=collection)
 
@@ -102,7 +102,7 @@ def delete_document():
         while True:
 
             collection = input('Key in the collection you want to delete from: ')
-            input_id = input('Key in the "_id" of the user you want to delete: ')
+            input_id = input('Key in the "_id" of the object you want to delete: ')
 
             existences = helpers.existence_checker(key='_id', value=input_id, collection=collection)
 
