@@ -9,9 +9,8 @@ def admin_menu():
     print('--Admin Menu--')
     print('1. Modify/Update Collection\'s documents')
     print('2. Delete Collection\'s documents')
-    print('3. View Collection\'s documents')
-    print('4. Create new Collection')
-    print('5. Logout')
+    print('3. Create new Collection')
+    print('4. Logout')
     print('0. Quit')
 
     option = input('Please select an option >>  ')
@@ -26,12 +25,9 @@ def admin_menu():
         delete_document()
 
     elif option == "3":
-        view_collection()
-
-    elif option == "4":
         create_new_collection()
 
-    elif option == "5":
+    elif option == "4":
         auth.auth_page()
 
     else:
@@ -88,7 +84,7 @@ def update_document():
 
 
 def delete_document():
-    print('--Delete Collection\'s objects--')
+    print('--Delete Collection\'s documents--')
     print('1. Continue')
     print('2. Back')
     print('0. Quit')
@@ -130,34 +126,6 @@ def delete_document():
     else:
         input(invalid_input_message)
         delete_document()
-
-
-def view_collection():
-    print('--View Collection\'s objects--')
-    print('1. Continue')
-    print('2. Back')
-    print('0. Quit')
-    print()
-    option = input('Please select an option >>  ')
-
-    if option == "0":
-        helpers.exit_program()
-
-    elif option == "1":
-        users = db.read('users')
-
-        for user in users['result']:
-            print(user)
-
-        input('Press enter to continue . . .')
-        admin_menu()
-
-    elif option == "2":
-        admin_menu()
-
-    else:
-        input(invalid_input_message)
-        view_collection()
 
 
 def create_new_collection():
